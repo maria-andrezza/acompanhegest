@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f8a5c2">
   <title>Offline - AcompanheGest</title>
   <style>
     * {
@@ -25,10 +26,23 @@
     .offline-container {
       background: white;
       border-radius: 48px;
-      padding: 40px;
-      max-width: 400px;
+      padding: 40px 32px;
+      max-width: 380px;
       text-align: center;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .offline-icon {
@@ -39,11 +53,12 @@
     h1 {
       color: #f8a5c2;
       margin-bottom: 16px;
+      font-size: 28px;
     }
 
     p {
       color: #666;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       line-height: 1.6;
     }
 
@@ -56,19 +71,31 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: all 0.3s;
+      margin-top: 8px;
     }
 
     button:hover {
       transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(248, 165, 194, 0.4);
     }
 
     .dicas {
-      margin-top: 32px;
-      padding-top: 24px;
+      margin-top: 28px;
+      padding-top: 20px;
       border-top: 1px solid #f0e0e8;
-      font-size: 14px;
+      font-size: 13px;
       color: #b87c9a;
+    }
+
+    .dicas ul {
+      margin-top: 12px;
+      text-align: left;
+      padding-left: 20px;
+    }
+
+    .dicas li {
+      margin: 8px 0;
     }
   </style>
 </head>
@@ -81,11 +108,16 @@
       O AcompanheGest funciona melhor com internet,<br>
       mas seus dados já estão salvos no seu celular!
     </p>
-    <button onclick="tentarRecarregar()">🔁 Tentar novamente</button>
+    <button onclick="tentarRecarregar()">🔁 Tentar reconectar</button>
 
     <div class="dicas">
-      💡 Dica: O app já salvou todos os seus registros.<br>
-      Quando a internet voltar, tudo estará aqui!
+      💡 <strong>Enquanto isso, você pode:</strong>
+      <ul>
+        <li>📝 Revisar seus registros anteriores</li>
+        <li>👶 Ver o desenvolvimento do bebê</li>
+        <li>📊 Consultar suas estatísticas</li>
+      </ul>
+      <p style="margin-top: 16px;">Quando a internet voltar, todos os novos registros serão salvos normalmente!</p>
     </div>
   </div>
 
@@ -98,6 +130,13 @@
     window.addEventListener('online', () => {
       window.location.reload();
     });
+
+    // Verifica conexão a cada 30 segundos
+    setInterval(() => {
+      if (navigator.onLine) {
+        window.location.reload();
+      }
+    }, 30000);
   </script>
 </body>
 

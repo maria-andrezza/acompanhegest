@@ -8,135 +8,469 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AcompGest">
-  <meta name="mobile-web-app-capable" content="yes">
-
-  <title>AcompanheGest - Acompanhamento Inteligente da Gestação</title>
-
-  <!-- Manifest PWA -->
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Ícones -->
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-  <link rel="shortcut icon" href="icons/favicon.ico">
-
-  <!-- CSS -->
+  <title>AcompanheGest - Sua Gestação</title>
   <link rel="stylesheet" href="style.css">
-
   <style>
-    /* Notificação de instalação do app */
-    .install-banner {
-      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+    /* ========== ESTILOS DO NOVO LAYOUT ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fef7f0;
+      color: #4a4a6a;
+      padding-bottom: 70px;
+    }
+
+    /* Header com imagem do bebê */
+    .header-moderno {
+      background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
+      padding: 24px 20px 40px 20px;
+      border-radius: 0 0 32px 32px;
       color: white;
-      padding: 12px 20px;
-      border-radius: 60px;
-      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      animation: slideDown 0.5s ease;
+      margin-bottom: 20px;
     }
 
-    @keyframes slideDown {
-      from {
-        transform: translateY(-100%);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .install-banner button {
-      background: white;
-      color: #f8a5c2;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 40px;
+    .logo-pequeno {
+      font-size: 24px;
       font-weight: bold;
+    }
+
+    .btn-sair {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 30px;
+      color: white;
       cursor: pointer;
     }
 
-    .install-banner .close {
-      background: transparent;
+    .saudacao {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .info-gestacao {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .semanas-dias {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: bold;
+    }
+
+    .progresso-container {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      height: 8px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+
+    .progresso-barra {
+      background: white;
+      height: 100%;
+      border-radius: 20px;
+      width: 0%;
+      transition: width 0.5s;
+    }
+
+    .dias-faltam {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* Card do bebê */
+    .bebe-card {
+      background: white;
+      border-radius: 32px;
+      padding: 20px;
+      margin: -20px 16px 20px 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .bebe-ilustracao {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    .bebe-info {
+      flex: 1;
+    }
+
+    .bebe-nome {
+      font-size: 24px;
+      font-weight: bold;
+      color: #f8a5c2;
+    }
+
+    .bebe-tamanho {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .bebe-sexo {
+      display: inline-block;
+      background: #f0e0e8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .desenvolvimento {
+      background: #fef5fc;
+      padding: 12px;
+      border-radius: 20px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Cards de alertas */
+    .alertas-container {
+      padding: 0 16px;
+      margin-bottom: 20px;
+    }
+
+    .alerta-card {
+      background: #fff3e0;
+      border-left: 6px solid #f7a74e;
+      padding: 16px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .alerta-card.critical {
+      border-left-color: #e74c3c;
+      background: #ffeaea;
+    }
+
+    .alerta-card.success {
+      border-left-color: #2ecc71;
+      background: #e8f8f0;
+    }
+
+    /* Menu inferior */
+    .menu-inferior {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+      border-top: 1px solid #f0e0e8;
+      z-index: 100;
+    }
+
+    .menu-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 40px;
+      transition: all 0.3s;
+      color: #c7a5b8;
+    }
+
+    .menu-item.active {
+      color: #f8a5c2;
+      background: #fef5fc;
+    }
+
+    .menu-icon {
+      font-size: 24px;
+    }
+
+    .menu-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Conteúdo das seções */
+    .secao {
+      display: none;
+      padding: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .secao.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-secao {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-secao h3 {
+      color: #f8a5c2;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-registro {
+      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
       color: white;
-      font-size: 20px;
-      padding: 0;
-      width: 30px;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .registro-item {
+      background: #fefafc;
+      padding: 12px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      border-left: 4px solid #f8a5c2;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #c7a5b8;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #f0e0e8;
+      border-radius: 24px;
+      margin: 8px 0;
+    }
+
+    .grafico-peso {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 16px 0;
+    }
+
+    .barra-peso {
+      text-align: center;
+      min-width: 50px;
+    }
+
+    .barra {
+      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+      width: 35px;
+      border-radius: 12px 12px 4px 4px;
+      margin: 0 auto 8px;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <!-- Banner de instalação do app -->
-    <div id="installBanner" style="display: none;" class="install-banner">
-      <span>📱 Adicione o AcompanheGest à tela inicial do seu celular!</span>
-      <div>
-        <button id="btnInstalar">Instalar App</button>
-        <button id="btnFecharBanner" class="close">✕</button>
+  <!-- Header Moderno -->
+  <div class="header-moderno">
+    <div class="header-top">
+      <span class="logo-pequeno">🌸 AcompGest</span>
+      <button class="btn-sair" onclick="logout()">Sair</button>
+    </div>
+    <div class="saudacao">
+      Olá, <span id="nomeUsuario">Mamãe</span>! 🌸<br>
+      Como você e <span id="nomeBebeHeader">seu bebê</span> estão hoje?
+    </div>
+    <div class="info-gestacao">
+      <span class="semanas-dias" id="semanasDias">-- semanas -- dias</span>
+      <span class="progresso-container">
+        <div class="progresso-barra" id="progressoBarra"></div>
+      </span>
+    </div>
+    <div>
+      <span class="dias-faltam" id="diasRestantes">---</span>
+      <span>dias para o grande dia! 🎉</span>
+    </div>
+  </div>
+
+  <!-- Card do Bebê -->
+  <div class="bebe-card">
+    <div class="bebe-ilustracao" id="bebeIcone">👶</div>
+    <div class="bebe-info">
+      <div class="bebe-nome" id="bebeNome">---</div>
+      <div class="bebe-tamanho" id="bebeTamanho">É do tamanho de um(a) ---</div>
+      <div class="bebe-sexo" id="bebeSexo">👧 Menina</div>
+      <div class="desenvolvimento" id="desenvolvimento">
+        Carregando informações...
       </div>
     </div>
+  </div>
 
-    <!-- Header -->
-    <div class="header">
-      <div class="header-content">
-        <div class="logo-mini">
-          <span class="logo-icon-mini">🌸</span>
-          <h1>Acompanhe<span class="highlight">Gest</span></h1>
-        </div>
-        <button class="btn-logout" onclick="logout()">🚪 Sair</button>
-      </div>
-      <div class="saudacao">
-        <h2>🌸 Olá, <span id="nomeUsuario">Mamãe</span>! 🌸</h2>
-        <p class="subtitulo">Acompanhamento personalizado para você e <span id="nomeBebeHeader">seu bebê</span></p>
-      </div>
-      <div id="infoGestacao" class="gestacao-info"></div>
-      <div class="dias-counter">
-        <span class="dias-numero" id="diasRestantes">---</span>
-        <span class="dias-texto">dias para o grande dia! 🎉</span>
-      </div>
+  <!-- Alertas e Recomendações -->
+  <div class="alertas-container" id="alertasContainer">
+    <!-- Alertas vão aparecer aqui -->
+  </div>
+
+  <!-- Menu Inferior -->
+  <div class="menu-inferior">
+    <button class="menu-item active" data-secao="inicio">
+      <span class="menu-icon">🏠</span>
+      <span class="menu-label">Início</span>
+    </button>
+    <button class="menu-item" data-secao="saude">
+      <span class="menu-icon">❤️</span>
+      <span class="menu-label">Saúde</span>
+    </button>
+    <button class="menu-item" data-secao="exames">
+      <span class="menu-icon">📋</span>
+      <span class="menu-label">Exames</span>
+    </button>
+    <button class="menu-item" data-secao="perfil">
+      <span class="menu-icon">👤</span>
+      <span class="menu-label">Perfil</span>
+    </button>
+  </div>
+
+  <!-- Seção Início (Resumo) -->
+  <div id="secao-inicio" class="secao active">
+    <div class="card-secao">
+      <h3>📊 Resumo da Semana</h3>
+      <div id="resumoSemana"></div>
+    </div>
+    <div class="card-secao">
+      <h3>📝 Últimos Registros</h3>
+      <div id="ultimosRegistros"></div>
+      <button class="btn-registro" onclick="mostrarModalRegistro()">➕ Novo Registro Rápido</button>
+    </div>
+  </div>
+
+  <!-- Seção Saúde -->
+  <div id="secao-saude" class="secao">
+    <div class="card-secao">
+      <h3>⚖️ Evolução do Peso</h3>
+      <div id="graficoPeso" class="grafico-peso"></div>
+      <div id="listaPesos"></div>
+      <button class="btn-registro" onclick="adicionarPeso()">➕ Registrar Peso</button>
     </div>
 
-    <!-- ALERTAS INTELIGENTES -->
-    <div class="card card-alerts">
-      <h2><span class="card-icon">🧠</span> Alertas e Dicas Personalizadas</h2>
-      <div id="alertsContainer">
-        <div class="empty-state">✨ Adicione seus dados para receber alertas inteligentes</div>
-      </div>
+    <div class="card-secao">
+      <h3>❤️ Pressão Arterial</h3>
+      <div id="listaPressao"></div>
+      <button class="btn-registro" onclick="adicionarPressao()">➕ Registrar Pressão</button>
     </div>
 
-    <!-- Configurações iniciais -->
-    <div class="card" id="configCard">
-      <h2><span class="card-icon">📝</span> Minhas Informações</h2>
-      <div class="grid-2" id="formConfig">
+    <div class="card-secao">
+      <h3>👶 Movimentos Fetais</h3>
+      <div id="listaMovimentos"></div>
+      <button class="btn-registro" onclick="adicionarMovimento()">➕ Registrar Movimentos</button>
+    </div>
+
+    <div class="card-secao">
+      <h3>📝 Sintomas</h3>
+      <div id="listaSintomas"></div>
+      <button class="btn-registro" onclick="adicionarSintoma()">➕ Registrar Sintoma</button>
+    </div>
+  </div>
+
+  <!-- Seção Exames -->
+  <div id="secao-exames" class="secao">
+    <div class="card-secao">
+      <h3>🔬 Exames Realizados</h3>
+      <div id="listaExames"></div>
+      <button class="btn-registro" onclick="adicionarExame()">➕ Novo Exame</button>
+    </div>
+
+    <div class="card-secao">
+      <h3>👩‍⚕️ Consultas</h3>
+      <div id="listaConsultas"></div>
+      <button class="btn-registro" onclick="adicionarConsulta()">➕ Nova Consulta</button>
+    </div>
+
+    <div class="card-secao">
+      <h3>📊 Estatísticas e Percentis</h3>
+      <div id="insightsContainer"></div>
+    </div>
+  </div>
+
+  <!-- Seção Perfil -->
+  <div id="secao-perfil" class="secao">
+    <div class="card-secao">
+      <h3>👤 Meus Dados</h3>
+      <div class="grid-2">
         <div>
-          <label>👩 Seu nome</label>
-          <input type="text" id="nome" placeholder="Como você se chama?">
+          <label>Seu nome</label>
+          <input type="text" id="nome" placeholder="Seu nome">
         </div>
         <div>
-          <label>📏 Altura (cm)</label>
+          <label>Altura (cm)</label>
           <input type="number" id="altura" placeholder="Ex: 170">
         </div>
         <div>
-          <label>⚖️ Peso pré-gestacional (kg)</label>
+          <label>Peso pré-gestacional (kg)</label>
           <input type="number" id="pesoPre" placeholder="Ex: 65">
         </div>
         <div>
-          <label>📅 Data prevista do parto</label>
+          <label>Data prevista do parto</label>
           <input type="date" id="dpp">
         </div>
         <div>
-          <label>👶 Nome do bebê</label>
-          <input type="text" id="nomeBebe" placeholder="Qual o nome?">
+          <label>Nome do bebê</label>
+          <input type="text" id="nomeBebe" placeholder="Nome do bebê">
         </div>
         <div>
-          <label>🎀 Sexo do bebê</label>
+          <label>Sexo do bebê</label>
           <select id="sexoBebe">
             <option value="Menina">👧 Menina</option>
             <option value="Menino">👦 Menino</option>
@@ -144,135 +478,32 @@
           </select>
         </div>
       </div>
-      <button id="btnSalvarConfig" class="btn-primary">💾 Salvar Informações</button>
-    </div>
-
-    <!-- Peso e evolução -->
-    <div class="card">
-      <div class="flex-between">
-        <h2><span class="card-icon">⚖️</span> Evolução do Peso</h2>
-        <button id="btnNovoPeso" class="btn-secondary">➕ Registrar Peso</button>
-      </div>
-      <div id="graficoPeso" class="grafico-peso"></div>
-      <div id="listaPesos"></div>
-    </div>
-
-    <!-- Pressão Arterial -->
-    <div class="card">
-      <div class="flex-between">
-        <h2><span class="card-icon">❤️</span> Pressão Arterial</h2>
-        <button id="btnNovaPressao" class="btn-secondary">➕ Registrar Pressão</button>
-      </div>
-      <div id="listaPressao"></div>
-    </div>
-
-    <!-- Movimentos Fetais -->
-    <div class="card">
-      <div class="flex-between">
-        <h2><span class="card-icon">👶</span> Movimentos Fetais</h2>
-        <button id="btnNovoMovimento" class="btn-secondary">➕ Registrar Movimentos</button>
-      </div>
-      <div id="listaMovimentos"></div>
-    </div>
-
-    <!-- Sintomas -->
-    <div class="card">
-      <div class="flex-between">
-        <h2><span class="card-icon">📝</span> Sintomas e Bem-estar</h2>
-        <button id="btnRegistrarSintoma" class="btn-secondary">➕ Registrar Sintoma</button>
-      </div>
-      <div id="listaSintomas"></div>
-    </div>
-
-    <!-- Exames e consultas -->
-    <div class="card">
-      <div class="flex-between">
-        <h2><span class="card-icon">🩺</span> Exames & Consultas</h2>
-        <div>
-          <button id="btnNovoExame" class="btn-secondary">➕ Exame</button>
-          <button id="btnNovaConsulta" class="btn-secondary">➕ Consulta</button>
-        </div>
-      </div>
-      <div id="examesConsultasContainer"></div>
-    </div>
-
-    <!-- Estatísticas -->
-    <div class="card">
-      <h2><span class="card-icon">📊</span> Estatísticas e Percentis</h2>
-      <div id="insightsContainer"></div>
-    </div>
-
-    <div class="footer">
-      <p>💖 <strong>AcompanheGest</strong> - Cada gestação é única, seu acompanhamento também 💖</p>
-      <p>📱 Funciona offline | Dados salvos no seu celular | 100% privado</p>
-      <p>Versão 1.0 - App PWA</p>
+      <button class="btn-registro" onclick="salvarConfig()">💾 Salvar Informações</button>
     </div>
   </div>
 
   <script src="auth.js"></script>
-  <script src="script.js"></script>
-
+  <script src="script-novo.js"></script>
   <script>
-    // ==================== PWA - Instalação do App ====================
-    let deferredPrompt;
+    // Navegação entre seções
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const secao = item.dataset.secao;
 
-    // Detecta se pode instalar o app
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBanner').style.display = 'flex';
-    });
+        // Atualizar menu
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
 
-    // Botão de instalar
-    document.getElementById('btnInstalar')?.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          document.getElementById('installBanner').style.display = 'none';
-        }
-        deferredPrompt = null;
-      }
-    });
-
-    // Fechar banner
-    document.getElementById('btnFecharBanner')?.addEventListener('click', () => {
-      document.getElementById('installBanner').style.display = 'none';
-    });
-
-    // Registrar Service Worker para funcionar offline
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => {
-            console.log('Service Worker registrado com sucesso:', registration.scope);
-          })
-          .catch(error => {
-            console.log('Falha ao registrar Service Worker:', error);
-          });
+        // Atualizar seções
+        document.querySelectorAll('.secao').forEach(s => s.classList.remove('active'));
+        document.getElementById(`secao-${secao}`).classList.add('active');
       });
-    }
+    });
 
-    // Mostrar status de conexão
-    function atualizarStatusConexao() {
-      if (!navigator.onLine) {
-        const alertContainer = document.getElementById('alertsContainer');
-        if (alertContainer && !document.getElementById('offlineAlert')) {
-          const offlineAlert = document.createElement('div');
-          offlineAlert.id = 'offlineAlert';
-          offlineAlert.className = 'alert-box alert-warning';
-          offlineAlert.innerHTML = '<strong>📡 Modo Offline</strong><br>Você está sem internet. Seus registros serão salvos localmente e sincronizados quando a conexão voltar.';
-          alertContainer.insertBefore(offlineAlert, alertContainer.firstChild);
-        }
-      } else {
-        const offlineAlert = document.getElementById('offlineAlert');
-        if (offlineAlert) offlineAlert.remove();
-      }
+    function mostrarModalRegistro() {
+      // Simples: redirecionar para a seção Saúde
+      document.querySelector('.menu-item[data-secao="saude"]').click();
     }
-
-    window.addEventListener('online', atualizarStatusConexao);
-    window.addEventListener('offline', atualizarStatusConexao);
-    atualizarStatusConexao();
   </script>
 </body>
 

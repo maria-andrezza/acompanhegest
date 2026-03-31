@@ -13,9 +13,14 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-  <link rel="stylesheet" href="style.css">
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
       min-height: 100vh;
@@ -30,9 +35,9 @@
     .login-container {
       background: white;
       border-radius: 48px;
-      padding: 48px 40px;
+      padding: 40px 32px;
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
       text-align: center;
     }
@@ -59,7 +64,7 @@
     }
 
     .login-container h1 {
-      font-size: 2rem;
+      font-size: 28px;
       background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -70,7 +75,7 @@
     .tagline {
       color: #888;
       margin-bottom: 32px;
-      font-size: 0.9rem;
+      font-size: 14px;
     }
 
     .form-group {
@@ -81,8 +86,9 @@
     .form-group label {
       display: block;
       margin-bottom: 8px;
-      color: #555;
+      color: #b87c9a;
       font-weight: 500;
+      font-size: 13px;
     }
 
     .form-group input {
@@ -111,7 +117,7 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.3s;
       margin-top: 8px;
     }
 
@@ -147,13 +153,13 @@
       margin-bottom: 20px;
       text-align: center;
       display: none;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .info {
       text-align: center;
       margin-top: 28px;
-      font-size: 12px;
+      font-size: 11px;
       color: #aaa;
       border-top: 1px solid #f0e0e8;
       padding-top: 20px;
@@ -161,9 +167,9 @@
 
     .offline-badge {
       background: #f0e0e8;
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 11px;
       display: inline-block;
       margin-bottom: 16px;
     }
@@ -181,7 +187,7 @@
         <span>🌸</span>
       </div>
       <h1>AcompanheGest</h1>
-      <div class="tagline">🌸 Acompanhamento inteligente da sua gestação </div>
+      <div class="tagline">🌸 Acompanhamento inteligente da sua gestação 🌸</div>
       <div id="offlineBadge" class="offline-badge" style="display: none;">📡 Modo Offline - Dados locais disponíveis</div>
     </div>
 
@@ -196,8 +202,8 @@
         <label>🔒 Sua senha</label>
         <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
       </div>
-      <button class="btn-login" onclick="fazerLogin()">✨ Entrar no AcompanheGest ✨</button>
-      <button class="btn-cadastro" onclick="mostrarCadastro()">📝 Criar minha conta gratuita</button>
+      <button class="btn-login" onclick="fazerLogin()">✨ Entrar ✨</button>
+      <button class="btn-cadastro" onclick="mostrarCadastro()">📝 Criar minha conta</button>
     </div>
 
     <div id="cadastroForm" style="display: none;">
@@ -213,14 +219,14 @@
         <label>✅ Confirmar senha</label>
         <input type="password" id="confirmPassword" placeholder="Confirme sua senha">
       </div>
-      <button class="btn-login" onclick="criarConta()">💖 Criar minha conta</button>
-      <button class="btn-cadastro" onclick="voltarLogin()">← Voltar ao login</button>
+      <button class="btn-login" onclick="criarConta()">💖 Criar conta</button>
+      <button class="btn-cadastro" onclick="voltarLogin()">← Voltar</button>
     </div>
 
     <div class="info">
       <span class="heart">💖</span> Seus dados são salvos apenas no seu celular<br>
       Funciona offline! <span class="heart">📱</span><br>
-      <span class="heart">🌸 AcompanheGest - Cada gestação é única, seu acompanhamento também 🌸</span>
+      <span class="heart">🌸 AcompanheGest - Cada gestação é única 🌸</span>
     </div>
   </div>
 
@@ -258,7 +264,7 @@
         window.location.href = 'index.html?user=' + encodeURIComponent(username);
       } else {
         const errorDiv = document.getElementById('errorMsg');
-        errorDiv.textContent = '❌ Usuário ou senha não encontrados. Verifique seus dados ou crie uma nova conta.';
+        errorDiv.textContent = '❌ Usuário ou senha não encontrados.';
         errorDiv.style.display = 'block';
       }
     }
@@ -287,12 +293,12 @@
       }
 
       if (registrarUsuario(username, password)) {
-        alert('✅ Conta criada com sucesso! Agora faça login para começar a acompanhar sua gestação. 💖');
+        alert('✅ Conta criada com sucesso! Faça login para começar. 💖');
         voltarLogin();
         document.getElementById('username').value = username;
         document.getElementById('password').value = '';
       } else {
-        document.getElementById('errorMsg').textContent = '❌ Este nome de usuário já existe! Escolha outro.';
+        document.getElementById('errorMsg').textContent = '❌ Este nome de usuário já existe!';
         document.getElementById('errorMsg').style.display = 'block';
       }
     }
@@ -301,12 +307,8 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => {
-            console.log('Service Worker registrado');
-          })
-          .catch(error => {
-            console.log('Erro:', error);
-          });
+          .then(registration => console.log('Service Worker registrado'))
+          .catch(error => console.log('Erro:', error));
       });
     }
   </script>

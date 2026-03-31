@@ -1,7 +1,7 @@
 // AcompanheGest - Service Worker
 // Permite que o app funcione offline e tenha experiência nativa
 
-const CACHE_NAME = "acompanhegest-v1.0.0";
+const CACHE_NAME = "acompanhegest-v2.0.0";
 const urlsToCache = [
   "/",
   "/login.html",
@@ -11,15 +11,24 @@ const urlsToCache = [
   "/script.js",
   "/manifest.json",
   "/offline.html",
+  "/icons/icon-72.png",
+  "/icons/icon-96.png",
+  "/icons/icon-128.png",
+  "/icons/icon-144.png",
+  "/icons/icon-152.png",
+  "/icons/icon-192.png",
+  "/icons/icon-384.png",
+  "/icons/icon-512.png",
 ];
 
-// Instalação do Service Worker - cache dos arquivos principais
+// Instalação do Service Worker
 self.addEventListener("install", (event) => {
+  console.log("[Service Worker] Instalando...");
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => {
-        console.log("Cache aberto: ", CACHE_NAME);
+        console.log("[Service Worker] Cacheando arquivos...");
         return cache.addAll(urlsToCache);
       })
       .then(() => self.skipWaiting()),
@@ -28,6 +37,7 @@ self.addEventListener("install", (event) => {
 
 // Ativação - limpa caches antigos
 self.addEventListener("activate", (event) => {
+  console.log("[Service Worker] Ativando...");
   event.waitUntil(
     caches
       .keys()
@@ -35,7 +45,10 @@ self.addEventListener("activate", (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME) {
-              console.log("Removendo cache antigo:", cacheName);
+              console.log(
+                "[Service Worker] Removendo cache antigo:",
+                cacheName,
+              );
               return caches.delete(cacheName);
             }
           }),
@@ -45,7 +58,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Intercepta requisições e serve do cache quando offline
+// Intercepta requisições
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches
@@ -84,8 +97,17 @@ self.addEventListener("fetch", (event) => {
         if (event.request.destination === "document") {
           return caches.match("/offline.html");
         }
+
+        // Para imagens, retorna um placeholder
+        if (event.request.destination === "image") {
+          return new Response(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f8a5c2"/><text x="50" y="67" font-size="50" text-anchor="middle" fill="white">🌸</text></svg>',
+            { headers: { "Content-Type": "image/svg+xml" } },
+          );
+        }
+
         return new Response(
-          "Você está offline. Abra o app novamente quando tiver internet.",
+          "Você está offline. Conecte-se à internet para acessar o conteúdo.",
           {
             status: 503,
             statusText: "Offline",
@@ -95,16 +117,43 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Sincronização em background (para quando voltar online)
-self.addEventListener("sync", (event) => {
-  if (event.tag === "sync-dados") {
-    event.waitUntil(sincronizarDados());
-  }
+// Notificações push (opcional)
+self.addEventListener("push", (event) => {
+  const options = {
+    body: event.data ? event.data.text() : "Hora de registrar seus dados!",
+    icon: "/icons/icon-192.png",
+    badge: "/icons/icon-72.png",
+    vibrate: [200, 100, 200],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1,
+    },
+    actions: [
+      {
+        action: "registrar",
+        title: "Registrar Agora",
+      },
+      {
+        action: "fechar",
+        title: "Lembrar Depois",
+      },
+    ],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification("🌸 AcompanheGest", options),
+  );
 });
 
-async function sincronizarDados() {
-  // Aqui você pode implementar sincronização com algum servidor
-  console.log("Sincronizando dados...");
-  // Por enquanto, apenas log
-  return Promise.resolve();
-}
+// Clique na notificação
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  if (event.action === "registrar") {
+    event.waitUntil(clients.openWindow("/index.html?action=registrar"));
+  } else if (event.action === "fechar") {
+    // Apenas fecha
+  } else {
+    event.waitUntil(clients.openWindow("/index.html"));
+  }
+});

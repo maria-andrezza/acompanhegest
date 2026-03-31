@@ -1,4 +1,5 @@
-// Sistema de autenticação AcompanheGest
+// ==================== AcompanheGest - Sistema de Autenticação ====================
+
 class AuthSystem {
   constructor() {
     this.usuarios = this.carregarUsuarios();
@@ -19,6 +20,7 @@ class AuthSystem {
     );
   }
 
+  // Hash simples para senhas (não é criptografia forte, mas suficiente para demo local)
   hashSenha(senha) {
     let hash = 0;
     for (let i = 0; i < senha.length; i++) {
@@ -41,6 +43,7 @@ class AuthSystem {
 
     this.salvarUsuarios();
 
+    // Criar dados vazios para o novo usuário
     const dadosVazios = {
       config: {
         nome: "",
@@ -69,6 +72,7 @@ class AuthSystem {
   autenticar(username, senha) {
     const usuario = this.usuarios[username];
     if (!usuario) return false;
+
     return usuario.senhaHash === this.hashSenha(senha);
   }
 
@@ -95,8 +99,10 @@ class AuthSystem {
   }
 }
 
+// Instância global
 const auth = new AuthSystem();
 
+// Funções globais para usar no HTML
 function login(username, password) {
   if (auth.autenticar(username, password)) {
     auth.setUsuarioAtivo(username);

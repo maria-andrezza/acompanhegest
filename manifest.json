@@ -7,8 +7,8 @@
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#f8a5c2",
-  "background_color": "#ffffff",
-  "categories": ["health", "medical", "lifestyle"],
+  "background_color": "#fef7f0",
+  "categories": ["health", "medical", "lifestyle", "pregnancy"],
   "icons": [
     {
       "src": "icons/icon-72.png",
@@ -59,18 +59,6 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "screenshots/login.png",
-      "sizes": "1080x1920",
-      "type": "image/png"
-    },
-    {
-      "src": "screenshots/home.png",
-      "sizes": "1080x1920",
-      "type": "image/png"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Registrar Peso",
@@ -94,6 +82,14 @@
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     }
   ],
-  "related_applications": [],
-  "prefer_related_applications": false
+  "screenshots": [
+    {
+      "src": "screenshots/home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Tela inicial do AcompanheGest"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
 }

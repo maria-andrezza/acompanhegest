@@ -2,6 +2,32 @@
 let dadosApp = null;
 let usuarioAtual = null;
 
+// Tamanhos do bebê por semana
+const tamanhosBebe = {
+  4: "semente de papoula",
+  8: "framboesa",
+  12: "limão",
+  16: "abacate",
+  20: "banana",
+  24: "espiga de milho",
+  28: "berinjela",
+  32: "abacaxi",
+  36: "melão",
+  40: "melancia",
+};
+
+// Desenvolvimento por semana
+const desenvolvimento = {
+  12: "O bebê já tem dedos formados e começa a se mexer!",
+  16: "Os olhos e ouvidos estão se desenvolvendo. O bebê já ouve sua voz!",
+  20: "O bebê já reconhece sua voz! Continue conversando com ele(a).",
+  24: "Os pulmões estão se desenvolvendo. O bebê já reage a sons externos.",
+  28: "O bebê abre e fecha os olhos. Já tem ciclos de sono definidos.",
+  32: "O bebê ganha peso rapidamente. Os ossos estão se fortalecendo.",
+  36: "O bebê já está na posição para o nascimento. Continue monitorando os movimentos!",
+  40: "Qualquer dia é dia! O bebê está pronto para conhecer o mundo!",
+};
+
 function salvarDados() {
   if (usuarioAtual && dadosApp) {
     localStorage.setItem(
@@ -67,122 +93,77 @@ function calcularIdadeGestacional() {
   return { semanas: Math.max(0, semanas), dias: Math.max(0, dias) };
 }
 
-function getPercentilPeso(peso, semanas) {
-  if (semanas < 12) return "📊 Acompanhamento iniciando";
-  if (peso < 65) return "🟢 Abaixo da média (percentil 25)";
-  if (peso >= 65 && peso < 72) return "🟡 Dentro da média (percentil 50-75)";
-  if (peso >= 72 && peso < 80) return "🟠 Acima da média (percentil 75-90)";
-  return "🔴 Muito acima da média - Consulte nutricionista";
+function getTamanhoBebe(semanas) {
+  if (semanas <= 4) return tamanhosBebe[4];
+  if (semanas <= 8) return tamanhosBebe[8];
+  if (semanas <= 12) return tamanhosBebe[12];
+  if (semanas <= 16) return tamanhosBebe[16];
+  if (semanas <= 20) return tamanhosBebe[20];
+  if (semanas <= 24) return tamanhosBebe[24];
+  if (semanas <= 28) return tamanhosBebe[28];
+  if (semanas <= 32) return tamanhosBebe[32];
+  if (semanas <= 36) return tamanhosBebe[36];
+  return tamanhosBebe[40];
 }
 
-function gerarAlertasInteligentes() {
+function getDesenvolvimento(semanas) {
+  if (semanas <= 12) return desenvolvimento[12];
+  if (semanas <= 16) return desenvolvimento[16];
+  if (semanas <= 20) return desenvolvimento[20];
+  if (semanas <= 24) return desenvolvimento[24];
+  if (semanas <= 28) return desenvolvimento[28];
+  if (semanas <= 32) return desenvolvimento[32];
+  if (semanas <= 36) return desenvolvimento[36];
+  return desenvolvimento[40];
+}
+
+function gerarAlertas() {
   const alerts = [];
   const idade = calcularIdadeGestacional();
-  const ultimoPeso =
-    dadosApp.registrosPeso[dadosApp.registrosPeso.length - 1]?.peso || 0;
-  const pesoInicial = dadosApp.config.pesoPreGestacional || 0;
-  const ganhoTotal = ultimoPeso - pesoInicial;
 
-  // Pressão Arterial
-  const pressoesRecentes = dadosApp.pressaoArterial.slice(-3);
-  for (let p of pressoesRecentes) {
-    const [sist, diast] = p.valores.split("/").map(Number);
-    if (sist >= 140 || diast >= 90) {
-      alerts.push({
-        tipo: "critical",
-        titulo: "⚠️ ALERTA DE PRESSÃO ALTA!",
-        mensagem: `Pressão ${p.valores} mmHg registrada. Procure atendimento médico imediatamente.`,
-      });
-    } else if (sist >= 130 || diast >= 85) {
-      alerts.push({
-        tipo: "warning",
-        titulo: "Atenção à Pressão Arterial",
-        mensagem: `Pressão ${p.valores} mmHg. Reduza o consumo de sal, beba água e descanse.`,
-      });
-    }
-  }
-
-  // Movimentos fetais
-  const movimentosRecentes = dadosApp.movimentosFetais.slice(-3);
-  for (let m of movimentosRecentes) {
-    if (m.quantidade < 10 && idade.semanas >= 28) {
-      alerts.push({
-        tipo: "critical",
-        titulo: "🔴 ATENÇÃO: Poucos Movimentos!",
-        mensagem: `${m.quantidade} movimentos registrados. Beba água gelada, deite-se e reconte. Se persistir, vá ao pronto-socorro.`,
-      });
-    } else if (m.quantidade < 10 && idade.semanas >= 24) {
-      alerts.push({
-        tipo: "warning",
-        titulo: "Observe os Movimentos do Bebê",
-        mensagem: `${m.quantidade} movimentos. O ideal é acima de 10 movimentos em 1 hora.`,
-      });
-    }
-  }
-
-  // Ferritina e Hemoglobina
-  const ferritina = dadosApp.exames.find(
-    (e) => e.nome.toLowerCase() === "ferritina",
-  );
-  const hemoglobina = dadosApp.exames.find(
-    (e) => e.nome.toLowerCase() === "hemoglobina",
-  );
-
-  if (ferritina && ferritina.valor < 30) {
+  // Verificar sintomas recentes
+  const sintomasRecentes = dadosApp.sintomas.slice(-3);
+  const ultimoSintoma = sintomasRecentes[sintomasRecentes.length - 1];
+  if (ultimoSintoma) {
     alerts.push({
-      tipo: "warning",
-      titulo: "🥩 Ferritina Baixa Detectada",
-      mensagem:
-        "Aumente o consumo de alimentos ricos em ferro (carne, feijão, espinafre) e combine com vitamina C.",
+      tipo: "success",
+      mensagem: `Você relatou "${ultimoSintoma.descricao}" recentemente.`,
     });
   }
 
-  if (hemoglobina && hemoglobina.valor < 11) {
+  // Verificar recomendações de consultas
+  const ultimaConsulta = dadosApp.consultas[dadosApp.consultas.length - 1];
+  if (ultimaConsulta && ultimaConsulta.recomendacoes) {
+    alerts.push({
+      tipo: "success",
+      mensagem: `${ultimaConsulta.especialidade} recomendou: "${ultimaConsulta.recomendacoes}". Lembre-se de seguir! 💪`,
+    });
+  }
+
+  // Verificar pressão
+  const ultimaPressao =
+    dadosApp.pressaoArterial[dadosApp.pressaoArterial.length - 1];
+  if (ultimaPressao) {
+    const [sist] = ultimaPressao.valores.split("/").map(Number);
+    if (sist >= 140) {
+      alerts.push({
+        tipo: "critical",
+        mensagem: `⚠️ Pressão alta registrada (${ultimaPressao.valores}). Procure atendimento médico!`,
+      });
+    }
+  }
+
+  // Verificar movimentos
+  const ultimoMovimento =
+    dadosApp.movimentosFetais[dadosApp.movimentosFetais.length - 1];
+  if (
+    ultimoMovimento &&
+    ultimoMovimento.quantidade < 10 &&
+    idade.semanas >= 28
+  ) {
     alerts.push({
       tipo: "critical",
-      titulo: "🩸 Hemoglobina Baixa - Risco de Anemia",
-      mensagem: "Consulte seu obstetra para avaliar suplementação de ferro.",
-    });
-  }
-
-  // Ganho de peso
-  if (pesoInicial > 0 && idade.semanas > 0) {
-    if (idade.semanas <= 12 && ganhoTotal > 2) {
-      alerts.push({
-        tipo: "warning",
-        titulo: "📈 Acompanhamento de Peso",
-        mensagem: `Ganho de ${ganhoTotal.toFixed(1)}kg no primeiro trimestre. Mantenha alimentação equilibrada.`,
-      });
-    } else if (idade.semanas > 12 && ganhoTotal > 9) {
-      alerts.push({
-        tipo: "warning",
-        titulo: "Atenção ao Ganho de Peso",
-        mensagem: `Ganho total: ${ganhoTotal.toFixed(1)}kg. Meta recomendada: 5-9kg na gestação.`,
-      });
-    }
-  }
-
-  // Dor pélvica
-  const temDorPelvica = dadosApp.sintomas.some(
-    (s) =>
-      s.descricao.toLowerCase().includes("pélvica") ||
-      s.descricao.toLowerCase().includes("quadril"),
-  );
-  if (temDorPelvica) {
-    alerts.push({
-      tipo: "success",
-      titulo: "🧘 Dica para Dor Pélvica",
-      mensagem:
-        "Faça exercícios de Kegel 3x ao dia, evite ficar muito tempo na mesma posição e use travesseiro entre as pernas.",
-    });
-  }
-
-  if (alerts.length === 0 && dadosApp.registrosPeso.length > 0) {
-    alerts.push({
-      tipo: "success",
-      titulo: "✨ Tudo está indo bem! ✨",
-      mensagem:
-        "Continue com o acompanhamento pré-natal, alimentação saudável e hidratação. Você e seu bebê estão sendo muito bem cuidados!",
+      mensagem: `⚠️ Poucos movimentos fetais (${ultimoMovimento.quantidade}/hora). Observe e procure ajuda se persistir.`,
     });
   }
 
@@ -191,13 +172,16 @@ function gerarAlertasInteligentes() {
 
 function renderizarTudo() {
   renderizarHeader();
+  renderizarCardBebe();
   renderizarAlertas();
-  renderizarGraficoPeso();
-  renderizarListaPesos();
+  renderizarResumoSemana();
+  renderizarUltimosRegistros();
+  renderizarPeso();
   renderizarPressao();
   renderizarMovimentos();
   renderizarSintomas();
-  renderizarExamesConsultas();
+  renderizarExames();
+  renderizarConsultas();
   renderizarInsights();
 }
 
@@ -209,82 +193,133 @@ function renderizarHeader() {
   document.getElementById("nomeBebeHeader").innerHTML = nomeBebe;
 
   const idade = calcularIdadeGestacional();
-  const infoDiv = document.getElementById("infoGestacao");
-  const sexo = dadosApp.config.sexoBebe || "";
+  document.getElementById("semanasDias").innerHTML =
+    `${idade.semanas} sem ${idade.dias} dias`;
+
+  const percentual = (idade.semanas / 40) * 100;
+  document.getElementById("progressoBarra").style.width = `${percentual}%`;
+
+  const diasRestantes = calcularDiasRestantes();
+  document.getElementById("diasRestantes").innerHTML = diasRestantes;
+}
+
+function renderizarCardBebe() {
+  const nomeBebe = dadosApp.config.nomeBebe || "Aguardando nome";
+  document.getElementById("bebeNome").innerHTML = nomeBebe;
+
+  const idade = calcularIdadeGestacional();
+  const tamanho = getTamanhoBebe(idade.semanas);
+  document.getElementById("bebeTamanho").innerHTML =
+    `É do tamanho de um(a) ${tamanho}! ${idade.semanas >= 12 ? "🍈" : "🌸"}`;
+
+  const sexo = dadosApp.config.sexoBebe || "Menina";
   const sexoIcon = sexo === "Menina" ? "👧" : sexo === "Menino" ? "👦" : "❓";
+  document.getElementById("bebeSexo").innerHTML = `${sexoIcon} ${sexo}`;
+  document.getElementById("bebeIcone").innerHTML =
+    sexo === "Menina" ? "👧" : sexo === "Menino" ? "👦" : "👶";
 
-  infoDiv.innerHTML = `
-        <span class="badge">📅 ${idade.semanas} semanas e ${idade.dias} dias</span>
-        <span class="badge">${nomeBebe} ${sexoIcon}</span>
-        <span class="badge">💖 ${sexo === "Menina" ? "Princesinha" : sexo === "Menino" ? "Príncipe" : "Amor"}</span>
-    `;
-
-  document.getElementById("diasRestantes").innerText = calcularDiasRestantes();
+  const desenvolvimentoTexto = getDesenvolvimento(idade.semanas);
+  document.getElementById("desenvolvimento").innerHTML =
+    `<strong>Semana ${idade.semanas}</strong> — ${desenvolvimentoTexto}`;
 }
 
 function renderizarAlertas() {
-  const alerts = gerarAlertasInteligentes();
-  const container = document.getElementById("alertsContainer");
+  const alerts = gerarAlertas();
+  const container = document.getElementById("alertasContainer");
+
   if (alerts.length === 0) {
-    container.innerHTML =
-      '<div class="empty-state">✨ Adicione seus registros para receber dicas personalizadas do AcompanheGest</div>';
+    container.innerHTML = `
+            <div class="alerta-card success">
+                <strong>✨ Tudo bem por aqui!</strong><br>
+                Continue cuidando de você e do seu bebê! 💖
+            </div>
+        `;
     return;
   }
+
   container.innerHTML = alerts
     .map(
       (alert) => `
-        <div class="alert-box alert-${alert.tipo}">
-            <strong>${alert.titulo}</strong><br>${alert.mensagem}
+        <div class="alerta-card ${alert.tipo === "critical" ? "critical" : "success"}">
+            ${alert.mensagem}
         </div>
     `,
     )
     .join("");
 }
 
-function renderizarGraficoPeso() {
-  const container = document.getElementById("graficoPeso");
-  if (dadosApp.registrosPeso.length === 0) {
-    container.innerHTML =
-      '<div class="empty-state">📊 Registre seu peso para ver o gráfico evolutivo</div>';
-    return;
-  }
-  const ultimos = dadosApp.registrosPeso.slice(-7);
-  const maxPeso = Math.max(...ultimos.map((r) => r.peso), 70);
-  const minPeso = Math.min(...ultimos.map((r) => r.peso), 60);
-
-  container.innerHTML = ultimos
-    .map((r) => {
-      const altura = 40 + ((r.peso - minPeso) / (maxPeso - minPeso)) * 100;
-      return `
-            <div class="barra-peso">
-                <div class="barra" style="height: ${Math.max(45, altura)}px;"></div>
-                <div style="font-size: 0.7rem; font-weight: bold;">${r.peso}kg</div>
-                <div style="font-size: 0.6rem; color: #b87c9a;">${new Date(r.data).toLocaleDateString("pt-BR").slice(0, 5)}</div>
-            </div>
-        `;
-    })
-    .join("");
+function renderizarResumoSemana() {
+  const idade = calcularIdadeGestacional();
+  const container = document.getElementById("resumoSemana");
+  container.innerHTML = `
+        <p>🌸 <strong>${idade.semanas} semanas</strong> de gestação</p>
+        <p>📏 Tamanho do bebê: <strong>${getTamanhoBebe(idade.semanas)}</strong></p>
+        <p>💡 ${getDesenvolvimento(idade.semanas)}</p>
+    `;
 }
 
-function renderizarListaPesos() {
-  const div = document.getElementById("listaPesos");
+function renderizarUltimosRegistros() {
+  const container = document.getElementById("ultimosRegistros");
+  let html = "";
+
+  const ultimoPeso = dadosApp.registrosPeso[dadosApp.registrosPeso.length - 1];
+  if (ultimoPeso) {
+    html += `<div class="registro-item">⚖️ Último peso: <strong>${ultimoPeso.peso} kg</strong> em ${new Date(ultimoPeso.data).toLocaleDateString("pt-BR")}</div>`;
+  }
+
+  const ultimaPressao =
+    dadosApp.pressaoArterial[dadosApp.pressaoArterial.length - 1];
+  if (ultimaPressao) {
+    html += `<div class="registro-item">❤️ Última pressão: <strong>${ultimaPressao.valores} mmHg</strong></div>`;
+  }
+
+  const ultimoMovimento =
+    dadosApp.movimentosFetais[dadosApp.movimentosFetais.length - 1];
+  if (ultimoMovimento) {
+    html += `<div class="registro-item">👶 Últimos movimentos: <strong>${ultimoMovimento.quantidade}</strong> movimentos/hora</div>`;
+  }
+
+  if (html === "") {
+    html =
+      '<div class="empty-state">Nenhum registro ainda. Comece a acompanhar sua gestação! 💖</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function renderizarPeso() {
+  const grafico = document.getElementById("graficoPeso");
+  const lista = document.getElementById("listaPesos");
+
   if (dadosApp.registrosPeso.length === 0) {
-    div.innerHTML =
-      '<div class="empty-state">Nenhum registro de peso ainda</div>';
+    grafico.innerHTML =
+      '<div class="empty-state">Nenhum registro de peso</div>';
+    lista.innerHTML = "";
     return;
   }
-  div.innerHTML =
-    "<h3 style='margin-top:16px;'>📋 Histórico de Peso</h3>" +
+
+  const ultimos = dadosApp.registrosPeso.slice(-7);
+  grafico.innerHTML = ultimos
+    .map(
+      (r) => `
+        <div class="barra-peso">
+            <div class="barra" style="height: ${Math.max(40, r.peso * 1.5)}px;"></div>
+            <div>${r.peso}kg</div>
+            <div style="font-size: 10px;">${new Date(r.data).toLocaleDateString("pt-BR").slice(0, 5)}</div>
+        </div>
+    `,
+    )
+    .join("");
+
+  lista.innerHTML =
+    "<strong>📋 Histórico:</strong><br>" +
     dadosApp.registrosPeso
       .slice()
       .reverse()
+      .slice(0, 5)
       .map(
-        (r) => `
-            <div class="registro-item flex-between">
-                <span>📅 ${new Date(r.data).toLocaleDateString("pt-BR")}</span>
-                <strong>⚖️ ${r.peso} kg</strong>
-            </div>
-        `,
+        (r) =>
+          `<div class="registro-item">${new Date(r.data).toLocaleDateString("pt-BR")}: ${r.peso} kg</div>`,
       )
       .join("");
 }
@@ -292,20 +327,15 @@ function renderizarListaPesos() {
 function renderizarPressao() {
   const div = document.getElementById("listaPressao");
   if (dadosApp.pressaoArterial.length === 0) {
-    div.innerHTML =
-      '<div class="empty-state">Nenhuma medição de pressão registrada</div>';
+    div.innerHTML = '<div class="empty-state">Nenhuma medição de pressão</div>';
     return;
   }
   div.innerHTML = dadosApp.pressaoArterial
     .slice()
     .reverse()
-    .slice(0, 5)
     .map(
       (p) => `
-        <div class="registro-item">
-            <strong>📅 ${new Date(p.data).toLocaleDateString("pt-BR")}</strong><br>
-            💓 Pressão: <strong>${p.valores} mmHg</strong>
-        </div>
+        <div class="registro-item">📅 ${new Date(p.data).toLocaleDateString("pt-BR")}: ${p.valores} mmHg</div>
     `,
     )
     .join("");
@@ -315,19 +345,15 @@ function renderizarMovimentos() {
   const div = document.getElementById("listaMovimentos");
   if (dadosApp.movimentosFetais.length === 0) {
     div.innerHTML =
-      '<div class="empty-state">Nenhum registro de movimentos do bebê</div>';
+      '<div class="empty-state">Nenhum registro de movimentos</div>';
     return;
   }
   div.innerHTML = dadosApp.movimentosFetais
     .slice()
     .reverse()
-    .slice(0, 5)
     .map(
       (m) => `
-        <div class="registro-item">
-            <strong>📅 ${new Date(m.data).toLocaleDateString("pt-BR")}</strong><br>
-            👶 <strong>${m.quantidade}</strong> movimentos em 1 hora
-        </div>
+        <div class="registro-item">📅 ${new Date(m.data).toLocaleDateString("pt-BR")}: ${m.quantidade} movimentos/hora</div>
     `,
     )
     .join("");
@@ -336,66 +362,53 @@ function renderizarMovimentos() {
 function renderizarSintomas() {
   const div = document.getElementById("listaSintomas");
   if (dadosApp.sintomas.length === 0) {
-    div.innerHTML =
-      '<div class="empty-state">Nenhum sintoma registrado. Como você está se sentindo?</div>';
+    div.innerHTML = '<div class="empty-state">Nenhum sintoma registrado</div>';
     return;
   }
   div.innerHTML = dadosApp.sintomas
     .slice()
     .reverse()
-    .slice(0, 5)
     .map(
       (s) => `
-        <div class="registro-item">
-            <strong>📅 ${new Date(s.data).toLocaleDateString("pt-BR")}</strong><br>
-            📝 ${s.descricao}
-        </div>
+        <div class="registro-item">📅 ${new Date(s.data).toLocaleDateString("pt-BR")}: ${s.descricao}</div>
     `,
     )
     .join("");
 }
 
-function renderizarExamesConsultas() {
-  const div = document.getElementById("examesConsultasContainer");
-  let html = "";
-
-  if (dadosApp.exames.length > 0) {
-    html += "<h3>🔬 Exames Realizados</h3>";
-    html += dadosApp.exames
-      .slice()
-      .reverse()
-      .map(
-        (e) => `
-            <div class="registro-item">
-                <strong>${e.nome}</strong> - ${new Date(e.data).toLocaleDateString("pt-BR")}<br>
-                📊 Resultado: ${e.valor} ${e.unidade}
-            </div>
-        `,
-      )
-      .join("");
+function renderizarExames() {
+  const div = document.getElementById("listaExames");
+  if (dadosApp.exames.length === 0) {
+    div.innerHTML = '<div class="empty-state">Nenhum exame registrado</div>';
+    return;
   }
+  div.innerHTML = dadosApp.exames
+    .slice()
+    .reverse()
+    .map(
+      (e) => `
+        <div class="registro-item">🔬 ${e.nome} - ${new Date(e.data).toLocaleDateString("pt-BR")}: ${e.valor} ${e.unidade}</div>
+    `,
+    )
+    .join("");
+}
 
-  if (dadosApp.consultas.length > 0) {
-    html += "<h3 style='margin-top:20px;'>👩‍⚕️ Consultas</h3>";
-    html += dadosApp.consultas
-      .slice()
-      .reverse()
-      .map(
-        (c) => `
-            <div class="registro-item">
-                <strong>${c.especialidade}</strong> - ${new Date(c.data).toLocaleDateString("pt-BR")}<br>
-                💡 ${c.recomendacoes || "Acompanhamento de rotina"}
-            </div>
-        `,
-      )
-      .join("");
+function renderizarConsultas() {
+  const div = document.getElementById("listaConsultas");
+  if (dadosApp.consultas.length === 0) {
+    div.innerHTML =
+      '<div class="empty-state">Nenhuma consulta registrada</div>';
+    return;
   }
-
-  if (dadosApp.exames.length === 0 && dadosApp.consultas.length === 0) {
-    html = '<div class="empty-state">Nenhum exame ou consulta registrado</div>';
-  }
-
-  div.innerHTML = html;
+  div.innerHTML = dadosApp.consultas
+    .slice()
+    .reverse()
+    .map(
+      (c) => `
+        <div class="registro-item">👩‍⚕️ ${c.especialidade} - ${new Date(c.data).toLocaleDateString("pt-BR")}<br>💡 ${c.recomendacoes || "Acompanhamento de rotina"}</div>
+    `,
+    )
+    .join("");
 }
 
 function renderizarInsights() {
@@ -406,33 +419,10 @@ function renderizarInsights() {
   const pesoInicial = dadosApp.config.pesoPreGestacional || 0;
   const ganhoTotal = ultimoPeso - pesoInicial;
 
-  const mediaMovimentos = dadosApp.movimentosFetais.length
-    ? (
-        dadosApp.movimentosFetais.reduce((a, b) => a + b.quantidade, 0) /
-        dadosApp.movimentosFetais.length
-      ).toFixed(0)
-    : "---";
-
-  const dicasPorSemana = {
-    primeiro: "💧 Beba bastante água e mantenha o ácido fólico em dia!",
-    segundo: "🥛 Aumente o consumo de cálcio para formação dos ossos do bebê.",
-    terceiro: "🛌 Descanse sempre que possível e monitore os movimentos.",
-  };
-
-  let dicaSemana = dicasPorSemana.primeiro;
-  if (idade.semanas > 12 && idade.semanas <= 28)
-    dicaSemana = dicasPorSemana.segundo;
-  if (idade.semanas > 28) dicaSemana = dicasPorSemana.terceiro;
-
   div.innerHTML = `
-        <div class="insight-card">
-            <p><strong>📈 Ganho total na gestação:</strong> ${ganhoTotal > 0 ? ganhoTotal.toFixed(1) : "---"} kg <span style="font-size:0.8rem;">(meta: 5-9kg)</span></p>
-            <p><strong>👶 Média de movimentos fetais:</strong> ${mediaMovimentos} por hora de contagem</p>
-            <p><strong>📊 Percentil de peso atual:</strong> ${ultimoPeso > 0 ? getPercentilPeso(ultimoPeso, idade.semanas) : "Registre seu primeiro peso para análise"}</p>
-            <p><strong>💡 Dica especial AcompanheGest:</strong> ${dicaSemana}</p>
-            <hr style="margin: 12px 0; border-color: #f0d5e8;">
-            <p style="font-size:0.85rem; text-align:center;">🌸 ${idade.semanas > 0 ? `Você já completou ${idade.semanas} semanas de amor e cuidado!` : "Configure sua data prevista para começar o acompanhamento"} 🌸</p>
-        </div>
+        <div class="registro-item">📈 Ganho total: ${ganhoTotal > 0 ? ganhoTotal.toFixed(1) : "---"} kg (meta 5-9kg)</div>
+        <div class="registro-item">📊 Percentil: ${ultimoPeso > 0 ? (ultimoPeso < 65 ? "Abaixo da média" : ultimoPeso < 72 ? "Dentro da média" : "Acima da média") : "Registre seu peso"}</div>
+        <div class="registro-item">💡 ${idade.semanas <= 12 ? "Foque em ácido fólico e hidratação" : idade.semanas <= 28 ? "Aumente o consumo de cálcio" : "Descanse bastante e monitore os movimentos"}</div>
     `;
 }
 
@@ -446,31 +436,26 @@ function adicionarPeso() {
     });
     salvarDados();
     renderizarTudo();
-    alert("✅ Peso registrado com sucesso no AcompanheGest!");
+    alert("✅ Peso registrado!");
   }
 }
 
 function adicionarPressao() {
   const sistolica = prompt("❤️ Pressão sistólica (máxima):", "");
   const diastolica = prompt("❤️ Pressão diastólica (mínima):", "");
-  if (
-    sistolica &&
-    diastolica &&
-    !isNaN(parseInt(sistolica)) &&
-    !isNaN(parseInt(diastolica))
-  ) {
+  if (sistolica && diastolica) {
     dadosApp.pressaoArterial.push({
       data: new Date().toISOString().slice(0, 10),
       valores: `${sistolica}/${diastolica}`,
     });
     salvarDados();
     renderizarTudo();
-    alert("✅ Pressão arterial registrada!");
+    alert("✅ Pressão registrada!");
   }
 }
 
 function adicionarMovimento() {
-  const quantidade = prompt("👶 Quantos movimentos você sentiu em 1 hora?", "");
+  const quantidade = prompt("👶 Quantos movimentos em 1 hora?", "");
   if (quantidade && !isNaN(parseInt(quantidade))) {
     dadosApp.movimentosFetais.push({
       data: new Date().toISOString().slice(0, 10),
@@ -478,15 +463,12 @@ function adicionarMovimento() {
     });
     salvarDados();
     renderizarTudo();
-    alert("✅ Movimentos do bebê registrados! 💖");
+    alert("✅ Movimentos registrados!");
   }
 }
 
 function adicionarSintoma() {
-  const sintoma = prompt(
-    "📝 Como você está se sentindo hoje? (ex: náusea, dor pélvica, cansaço)",
-    "",
-  );
+  const sintoma = prompt("📝 Como você está se sentindo?", "");
   if (sintoma && sintoma.trim()) {
     dadosApp.sintomas.push({
       data: new Date().toISOString().slice(0, 10),
@@ -494,14 +476,14 @@ function adicionarSintoma() {
     });
     salvarDados();
     renderizarTudo();
-    alert("✅ Sintoma registrado! Cuide-se bem.");
+    alert("✅ Sintoma registrado!");
   }
 }
 
 function adicionarExame() {
   const nome = prompt("🔬 Nome do exame:", "");
-  const valor = prompt("📊 Valor do resultado:", "");
-  const unidade = prompt("📏 Unidade (ex: g/dL, ng/mL):", "");
+  const valor = prompt("📊 Valor:", "");
+  const unidade = prompt("📏 Unidade:", "");
   if (nome && valor) {
     dadosApp.exames.push({
       nome: nome,
@@ -511,13 +493,13 @@ function adicionarExame() {
     });
     salvarDados();
     renderizarTudo();
-    alert("✅ Exame registrado! AcompanheGest vai analisar seus resultados.");
+    alert("✅ Exame registrado!");
   }
 }
 
 function adicionarConsulta() {
-  const especialidade = prompt("👩‍⚕️ Especialidade da consulta:", "");
-  const recomendacoes = prompt("💡 Recomendações do profissional:", "");
+  const especialidade = prompt("👩‍⚕️ Especialidade:", "");
+  const recomendacoes = prompt("💡 Recomendações:", "");
   if (especialidade) {
     dadosApp.consultas.push({
       especialidade: especialidade,
@@ -526,7 +508,7 @@ function adicionarConsulta() {
     });
     salvarDados();
     renderizarTudo();
-    alert("✅ Consulta registrada! Anote sempre as recomendações.");
+    alert("✅ Consulta registrada!");
   }
 }
 
@@ -542,44 +524,19 @@ function salvarConfig() {
   };
   salvarDados();
   renderizarTudo();
-  alert(
-    "✨ Informações salvas! Agora o AcompanheGest vai personalizar suas dicas.",
-  );
+  alert("✅ Informações salvas!");
 }
 
 // ========== INICIALIZAÇÃO ==========
 carregarDados();
 renderizarTudo();
 
-// Event listeners
-document
-  .getElementById("btnSalvarConfig")
-  ?.addEventListener("click", salvarConfig);
-document
-  .getElementById("btnNovoPeso")
-  ?.addEventListener("click", adicionarPeso);
-document
-  .getElementById("btnNovaPressao")
-  ?.addEventListener("click", adicionarPressao);
-document
-  .getElementById("btnNovoMovimento")
-  ?.addEventListener("click", adicionarMovimento);
-document
-  .getElementById("btnRegistrarSintoma")
-  ?.addEventListener("click", adicionarSintoma);
-document
-  .getElementById("btnNovoExame")
-  ?.addEventListener("click", adicionarExame);
-document
-  .getElementById("btnNovaConsulta")
-  ?.addEventListener("click", adicionarConsulta);
-
-// Preencher formulário se já tiver dados
+// Preencher formulário de perfil
 if (dadosApp.config.dpp) {
-  document.getElementById("dpp").value = dadosApp.config.dpp;
   document.getElementById("nome").value = dadosApp.config.nome;
   document.getElementById("altura").value = dadosApp.config.altura;
   document.getElementById("pesoPre").value = dadosApp.config.pesoPreGestacional;
+  document.getElementById("dpp").value = dadosApp.config.dpp;
   document.getElementById("nomeBebe").value = dadosApp.config.nomeBebe;
   document.getElementById("sexoBebe").value = dadosApp.config.sexoBebe;
 }
