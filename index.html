@@ -6,225 +6,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#f8a5c2">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="AcompGest">
   <title>AcompanheGest - Sua Gestação</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* ========== ESTILOS DO NOVO LAYOUT ========== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fef7f0;
-      color: #4a4a6a;
-      padding-bottom: 70px;
-    }
-
-    /* Header com imagem do bebê */
-    .header-moderno {
-      background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
-      padding: 24px 20px 40px 20px;
-      border-radius: 0 0 32px 32px;
-      color: white;
-      position: relative;
-    }
-
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .logo-pequeno {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .btn-sair {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 30px;
-      color: white;
-      cursor: pointer;
-    }
-
-    .saudacao {
-      font-size: 24px;
-      margin-bottom: 16px;
-    }
-
-    .info-gestacao {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .semanas-dias {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-weight: bold;
-    }
-
-    .progresso-container {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 20px;
-      height: 8px;
-      margin: 16px 0;
-      overflow: hidden;
-    }
-
-    .progresso-barra {
-      background: white;
-      height: 100%;
-      border-radius: 20px;
-      width: 0%;
-      transition: width 0.5s;
-    }
-
-    .dias-faltam {
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    /* Card do bebê */
-    .bebe-card {
-      background: white;
-      border-radius: 32px;
-      padding: 20px;
-      margin: -20px 16px 20px 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .bebe-ilustracao {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-    }
-
-    .bebe-info {
-      flex: 1;
-    }
-
-    .bebe-nome {
-      font-size: 24px;
-      font-weight: bold;
+    .loading {
+      text-align: center;
+      padding: 40px;
       color: #f8a5c2;
     }
 
-    .bebe-tamanho {
-      color: #888;
-      font-size: 14px;
+    .container-oculto {
+      display: none;
     }
 
-    .bebe-sexo {
-      display: inline-block;
-      background: #f0e0e8;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      margin-top: 8px;
+    .container-visivel {
+      display: block;
     }
 
-    .desenvolvimento {
-      background: #fef5fc;
-      padding: 12px;
-      border-radius: 20px;
-      margin-top: 12px;
-      font-size: 14px;
-      color: #666;
+    /* Esconde o header e card do bebê em telas que não são a inicial */
+    .secao:not(.active) .header-moderno,
+    .secao:not(.active) .bebe-card {
+      display: none;
     }
 
-    /* Cards de alertas */
-    .alertas-container {
-      padding: 0 16px;
-      margin-bottom: 20px;
-    }
-
-    .alerta-card {
-      background: #fff3e0;
-      border-left: 6px solid #f7a74e;
-      padding: 16px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-    }
-
-    .alerta-card.critical {
-      border-left-color: #e74c3c;
-      background: #ffeaea;
-    }
-
-    .alerta-card.success {
-      border-left-color: #2ecc71;
-      background: #e8f8f0;
-    }
-
-    /* Menu inferior */
-    .menu-inferior {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      padding: 12px 20px 20px;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
-      border-top: 1px solid #f0e0e8;
-      z-index: 100;
-    }
-
-    .menu-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 40px;
-      transition: all 0.3s;
-      color: #c7a5b8;
-    }
-
-    .menu-item.active {
-      color: #f8a5c2;
-      background: #fef5fc;
-    }
-
-    .menu-icon {
-      font-size: 24px;
-    }
-
-    .menu-label {
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    /* Conteúdo das seções */
+    /* Garante que cada seção tenha seu próprio layout */
     .secao {
       display: none;
-      padding: 16px;
+      padding: 0 16px 20px;
       animation: fadeIn 0.3s ease;
     }
 
@@ -232,277 +40,660 @@
       display: block;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* O header e card só aparecem na seção início */
+    #secao-inicio .header-moderno,
+    #secao-inicio .bebe-card,
+    #secao-inicio .alertas-container {
+      display: block;
     }
 
-    .card-secao {
-      background: white;
-      border-radius: 24px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    /* Nas outras seções, não aparecem */
+    #secao-saude .header-moderno,
+    #secao-saude .bebe-card,
+    #secao-saude .alertas-container,
+    #secao-exames .header-moderno,
+    #secao-exames .bebe-card,
+    #secao-exames .alertas-container,
+    #secao-perfil .header-moderno,
+    #secao-perfil .bebe-card,
+    #secao-perfil .alertas-container {
+      display: none;
     }
 
-    .card-secao h3 {
-      color: #f8a5c2;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-registro {
-      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 16px;
-    }
-
-    .registro-item {
-      background: #fefafc;
-      padding: 12px;
-      border-radius: 16px;
-      margin-bottom: 8px;
-      border-left: 4px solid #f8a5c2;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: #c7a5b8;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #f0e0e8;
-      border-radius: 24px;
-      margin: 8px 0;
-    }
-
-    .grafico-peso {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 16px 0;
-    }
-
-    .barra-peso {
-      text-align: center;
-      min-width: 50px;
-    }
-
-    .barra {
-      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
-      width: 35px;
-      border-radius: 12px 12px 4px 4px;
-      margin: 0 auto 8px;
+    /* Ajuste para as seções sem header terem padding top adequado */
+    #secao-saude,
+    #secao-exames,
+    #secao-perfil {
+      padding-top: 16px;
     }
   </style>
 </head>
 
 <body>
-  <!-- Header Moderno -->
-  <div class="header-moderno">
-    <div class="header-top">
-      <span class="logo-pequeno">🌸 AcompGest</span>
-      <button class="btn-sair" onclick="logout()">Sair</button>
-    </div>
-    <div class="saudacao">
-      Olá, <span id="nomeUsuario">Mamãe</span>! 🌸<br>
-      Como você e <span id="nomeBebeHeader">seu bebê</span> estão hoje?
-    </div>
-    <div class="info-gestacao">
-      <span class="semanas-dias" id="semanasDias">-- semanas -- dias</span>
-      <span class="progresso-container">
-        <div class="progresso-barra" id="progressoBarra"></div>
-      </span>
-    </div>
-    <div>
-      <span class="dias-faltam" id="diasRestantes">---</span>
-      <span>dias para o grande dia! 🎉</span>
-    </div>
+  <div id="loading" class="loading">
+    <div>🌸 Carregando AcompanheGest... 🌸</div>
   </div>
 
-  <!-- Card do Bebê -->
-  <div class="bebe-card">
-    <div class="bebe-ilustracao" id="bebeIcone">👶</div>
-    <div class="bebe-info">
-      <div class="bebe-nome" id="bebeNome">---</div>
-      <div class="bebe-tamanho" id="bebeTamanho">É do tamanho de um(a) ---</div>
-      <div class="bebe-sexo" id="bebeSexo">👧 Menina</div>
-      <div class="desenvolvimento" id="desenvolvimento">
-        Carregando informações...
-      </div>
-    </div>
-  </div>
+  <div id="appContainer" class="container-oculto">
 
-  <!-- Alertas e Recomendações -->
-  <div class="alertas-container" id="alertasContainer">
-    <!-- Alertas vão aparecer aqui -->
-  </div>
-
-  <!-- Menu Inferior -->
-  <div class="menu-inferior">
-    <button class="menu-item active" data-secao="inicio">
-      <span class="menu-icon">🏠</span>
-      <span class="menu-label">Início</span>
-    </button>
-    <button class="menu-item" data-secao="saude">
-      <span class="menu-icon">❤️</span>
-      <span class="menu-label">Saúde</span>
-    </button>
-    <button class="menu-item" data-secao="exames">
-      <span class="menu-icon">📋</span>
-      <span class="menu-label">Exames</span>
-    </button>
-    <button class="menu-item" data-secao="perfil">
-      <span class="menu-icon">👤</span>
-      <span class="menu-label">Perfil</span>
-    </button>
-  </div>
-
-  <!-- Seção Início (Resumo) -->
-  <div id="secao-inicio" class="secao active">
-    <div class="card-secao">
-      <h3>📊 Resumo da Semana</h3>
-      <div id="resumoSemana"></div>
-    </div>
-    <div class="card-secao">
-      <h3>📝 Últimos Registros</h3>
-      <div id="ultimosRegistros"></div>
-      <button class="btn-registro" onclick="mostrarModalRegistro()">➕ Novo Registro Rápido</button>
-    </div>
-  </div>
-
-  <!-- Seção Saúde -->
-  <div id="secao-saude" class="secao">
-    <div class="card-secao">
-      <h3>⚖️ Evolução do Peso</h3>
-      <div id="graficoPeso" class="grafico-peso"></div>
-      <div id="listaPesos"></div>
-      <button class="btn-registro" onclick="adicionarPeso()">➕ Registrar Peso</button>
+    <!-- Menu inferior fixo (aparece em todas as telas) -->
+    <div class="menu-inferior">
+      <button class="menu-item active" data-secao="inicio">
+        <span class="menu-icon">🏠</span>
+        <span class="menu-label">Início</span>
+      </button>
+      <button class="menu-item" data-secao="saude">
+        <span class="menu-icon">❤️</span>
+        <span class="menu-label">Saúde</span>
+      </button>
+      <button class="menu-item" data-secao="exames">
+        <span class="menu-icon">📋</span>
+        <span class="menu-label">Exames</span>
+      </button>
+      <button class="menu-item" data-secao="perfil">
+        <span class="menu-icon">👤</span>
+        <span class="menu-label">Perfil</span>
+      </button>
     </div>
 
-    <div class="card-secao">
-      <h3>❤️ Pressão Arterial</h3>
-      <div id="listaPressao"></div>
-      <button class="btn-registro" onclick="adicionarPressao()">➕ Registrar Pressão</button>
-    </div>
-
-    <div class="card-secao">
-      <h3>👶 Movimentos Fetais</h3>
-      <div id="listaMovimentos"></div>
-      <button class="btn-registro" onclick="adicionarMovimento()">➕ Registrar Movimentos</button>
-    </div>
-
-    <div class="card-secao">
-      <h3>📝 Sintomas</h3>
-      <div id="listaSintomas"></div>
-      <button class="btn-registro" onclick="adicionarSintoma()">➕ Registrar Sintoma</button>
-    </div>
-  </div>
-
-  <!-- Seção Exames -->
-  <div id="secao-exames" class="secao">
-    <div class="card-secao">
-      <h3>🔬 Exames Realizados</h3>
-      <div id="listaExames"></div>
-      <button class="btn-registro" onclick="adicionarExame()">➕ Novo Exame</button>
-    </div>
-
-    <div class="card-secao">
-      <h3>👩‍⚕️ Consultas</h3>
-      <div id="listaConsultas"></div>
-      <button class="btn-registro" onclick="adicionarConsulta()">➕ Nova Consulta</button>
-    </div>
-
-    <div class="card-secao">
-      <h3>📊 Estatísticas e Percentis</h3>
-      <div id="insightsContainer"></div>
-    </div>
-  </div>
-
-  <!-- Seção Perfil -->
-  <div id="secao-perfil" class="secao">
-    <div class="card-secao">
-      <h3>👤 Meus Dados</h3>
-      <div class="grid-2">
-        <div>
-          <label>Seu nome</label>
-          <input type="text" id="nome" placeholder="Seu nome">
+    <!-- ==================== SEÇÃO INÍCIO (com header e card do bebê) ==================== -->
+    <div id="secao-inicio" class="secao active">
+      <!-- Header (aparece só aqui) -->
+      <div class="header-moderno">
+        <div class="header-top">
+          <span class="logo-pequeno">🌸 AcompGest</span>
+          <button class="btn-sair" onclick="logout()">Sair</button>
+        </div>
+        <div class="saudacao">
+          Olá, <span id="nomeUsuario">Mamãe</span>! 🌸<br>
+          Como você e <span id="nomeBebeHeader">seu bebê</span> estão hoje?
+        </div>
+        <div class="info-gestacao">
+          <span class="semanas-dias" id="semanasDias">-- semanas -- dias</span>
+          <div class="progresso-container">
+            <div class="progresso-barra" id="progressoBarra"></div>
+          </div>
         </div>
         <div>
-          <label>Altura (cm)</label>
-          <input type="number" id="altura" placeholder="Ex: 170">
-        </div>
-        <div>
-          <label>Peso pré-gestacional (kg)</label>
-          <input type="number" id="pesoPre" placeholder="Ex: 65">
-        </div>
-        <div>
-          <label>Data prevista do parto</label>
-          <input type="date" id="dpp">
-        </div>
-        <div>
-          <label>Nome do bebê</label>
-          <input type="text" id="nomeBebe" placeholder="Nome do bebê">
-        </div>
-        <div>
-          <label>Sexo do bebê</label>
-          <select id="sexoBebe">
-            <option value="Menina">👧 Menina</option>
-            <option value="Menino">👦 Menino</option>
-            <option value="Não sei">❓ Ainda não sei</option>
-          </select>
+          <span class="dias-faltam" id="diasRestantes">---</span>
+          <span>dias para o grande dia! 🎉</span>
         </div>
       </div>
-      <button class="btn-registro" onclick="salvarConfig()">💾 Salvar Informações</button>
+
+      <!-- Card do Bebê (aparece só aqui) -->
+      <div class="bebe-card">
+        <div class="bebe-ilustracao" id="bebeIcone">👶</div>
+        <div class="bebe-info">
+          <div class="bebe-nome" id="bebeNome">---</div>
+          <div class="bebe-tamanho" id="bebeTamanho">Carregando...</div>
+          <div class="bebe-sexo" id="bebeSexo">---</div>
+          <div class="desenvolvimento" id="desenvolvimento">
+            Carregando informações...
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertas (aparece só aqui) -->
+      <div class="alertas-container" id="alertasContainer"></div>
+
+      <!-- Conteúdo da página inicial -->
+      <div class="card-secao">
+        <h3>📊 Resumo da Semana</h3>
+        <div id="resumoSemana"></div>
+      </div>
+      <div class="card-secao">
+        <h3>📝 Últimos Registros</h3>
+        <div id="ultimosRegistros"></div>
+        <button class="btn-registro" onclick="mostrarModalRegistro()">➕ Novo Registro Rápido</button>
+      </div>
+    </div>
+
+    <!-- ==================== SEÇÃO SAÚDE (sem header e sem card do bebê) ==================== -->
+    <div id="secao-saude" class="secao">
+      <div class="card-secao">
+        <h3>⚖️ Evolução do Peso</h3>
+        <div id="graficoPeso" class="grafico-peso"></div>
+        <div id="listaPesos"></div>
+        <button class="btn-registro" onclick="adicionarPeso()">➕ Registrar Peso</button>
+      </div>
+
+      <div class="card-secao">
+        <h3>❤️ Pressão Arterial</h3>
+        <div id="listaPressao"></div>
+        <button class="btn-registro" onclick="adicionarPressao()">➕ Registrar Pressão</button>
+      </div>
+
+      <div class="card-secao">
+        <h3>👶 Movimentos Fetais</h3>
+        <div id="listaMovimentos"></div>
+        <button class="btn-registro" onclick="adicionarMovimento()">➕ Registrar Movimentos</button>
+      </div>
+
+      <div class="card-secao">
+        <h3>📝 Sintomas</h3>
+        <div id="listaSintomas"></div>
+        <button class="btn-registro" onclick="adicionarSintoma()">➕ Registrar Sintoma</button>
+      </div>
+    </div>
+
+    <!-- ==================== SEÇÃO EXAMES (sem header e sem card do bebê) ==================== -->
+    <div id="secao-exames" class="secao">
+      <div class="card-secao">
+        <h3>🔬 Exames Realizados</h3>
+        <div id="listaExames"></div>
+        <button class="btn-registro" onclick="adicionarExame()">➕ Novo Exame</button>
+      </div>
+
+      <div class="card-secao">
+        <h3>👩‍⚕️ Consultas</h3>
+        <div id="listaConsultas"></div>
+        <button class="btn-registro" onclick="adicionarConsulta()">➕ Nova Consulta</button>
+      </div>
+
+      <div class="card-secao">
+        <h3>📊 Estatísticas e Percentis</h3>
+        <div id="insightsContainer"></div>
+      </div>
+    </div>
+
+    <!-- ==================== SEÇÃO PERFIL (sem header e sem card do bebê) ==================== -->
+    <div id="secao-perfil" class="secao">
+      <div class="card-secao">
+        <h3>👤 Meus Dados</h3>
+        <div class="grid-2">
+          <div>
+            <label>Seu nome</label>
+            <input type="text" id="nome" placeholder="Seu nome">
+          </div>
+          <div>
+            <label>Altura (cm)</label>
+            <input type="number" id="altura" placeholder="Ex: 170">
+          </div>
+          <div>
+            <label>Peso pré-gestacional (kg)</label>
+            <input type="number" id="pesoPre" placeholder="Ex: 65">
+          </div>
+          <div>
+            <label>Data prevista do parto</label>
+            <input type="date" id="dpp">
+          </div>
+          <div>
+            <label>Nome do bebê</label>
+            <input type="text" id="nomeBebe" placeholder="Nome do bebê">
+          </div>
+          <div>
+            <label>Sexo do bebê</label>
+            <select id="sexoBebe">
+              <option value="Menina">👧 Menina</option>
+              <option value="Menino">👦 Menino</option>
+              <option value="Não sei">❓ Ainda não sei</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-registro" onclick="salvarConfig()">💾 Salvar Informações</button>
+      </div>
+    </div>
+
+    <div class="footer-app">
+      <p>💖 AcompanheGest - Cada gestação é única 💖</p>
     </div>
   </div>
 
   <script src="auth.js"></script>
-  <script src="script-novo.js"></script>
   <script>
+    // Variável global para os dados
+    let dadosApp = null;
+    let usuarioAtual = null;
+
+    // Funções de persistência
+    function salvarDados() {
+      if (usuarioAtual && dadosApp) {
+        localStorage.setItem(`acompanhegest_dados_${usuarioAtual}`, JSON.stringify(dadosApp));
+        console.log('✅ Dados salvos para:', usuarioAtual);
+      }
+    }
+
+    function carregarDados() {
+      usuarioAtual = getUsuarioAtual();
+      console.log('👤 Usuário atual:', usuarioAtual);
+
+      if (!usuarioAtual) {
+        console.log('❌ Nenhum usuário logado, redirecionando...');
+        window.location.href = 'login.html';
+        return false;
+      }
+
+      const saved = localStorage.getItem(`acompanhegest_dados_${usuarioAtual}`);
+      console.log('📦 Dados salvos no localStorage:', saved ? 'Encontrados' : 'Vazio');
+
+      if (saved) {
+        try {
+          dadosApp = JSON.parse(saved);
+          console.log('✅ Dados carregados com sucesso!');
+        } catch (e) {
+          console.error('❌ Erro ao carregar dados:', e);
+        }
+      }
+
+      if (!dadosApp) {
+        console.log('📝 Criando estrutura de dados vazia');
+        dadosApp = {
+          config: {
+            nome: "",
+            altura: 0,
+            pesoPreGestacional: 0,
+            dpp: "",
+            nomeBebe: "",
+            sexoBebe: "Menina"
+          },
+          registrosPeso: [],
+          pressaoArterial: [],
+          movimentosFetais: [],
+          sintomas: [],
+          exames: [],
+          consultas: []
+        };
+      }
+
+      return true;
+    }
+
+    // Funções auxiliares
+    function calcularDiasRestantes() {
+      if (!dadosApp.config.dpp) return 0;
+      const hoje = new Date();
+      const dpp = new Date(dadosApp.config.dpp);
+      const diff = Math.ceil((dpp - hoje) / (1000 * 60 * 60 * 24));
+      return diff > 0 ? diff : 0;
+    }
+
+    function calcularIdadeGestacional() {
+      if (!dadosApp.config.dpp) return { semanas: 0, dias: 0 };
+      const hoje = new Date();
+      const dpp = new Date(dadosApp.config.dpp);
+      const totalDiasGestacao = 280;
+      const diasRestantes = calcularDiasRestantes();
+      const diasPassados = totalDiasGestacao - diasRestantes;
+      const semanas = Math.floor(diasPassados / 7);
+      const dias = diasPassados % 7;
+      return { semanas: Math.max(0, semanas), dias: Math.max(0, dias) };
+    }
+
+    const tamanhosBebe = {
+      4: "semente de papoula", 8: "framboesa", 12: "limão",
+      16: "abacate", 20: "banana", 24: "espiga de milho",
+      28: "berinjela", 32: "abacaxi", 36: "melão", 40: "melancia"
+    };
+
+    function getTamanhoBebe(semanas) {
+      if (semanas <= 4) return tamanhosBebe[4];
+      if (semanas <= 8) return tamanhosBebe[8];
+      if (semanas <= 12) return tamanhosBebe[12];
+      if (semanas <= 16) return tamanhosBebe[16];
+      if (semanas <= 20) return tamanhosBebe[20];
+      if (semanas <= 24) return tamanhosBebe[24];
+      if (semanas <= 28) return tamanhosBebe[28];
+      if (semanas <= 32) return tamanhosBebe[32];
+      if (semanas <= 36) return tamanhosBebe[36];
+      return tamanhosBebe[40];
+    }
+
+    const desenvolvimento = {
+      12: "O bebê já tem dedos formados e começa a se mexer!",
+      16: "Os olhos e ouvidos estão se desenvolvendo. O bebê já ouve sua voz!",
+      20: "O bebê já reconhece sua voz! Continue conversando com ele(a).",
+      24: "Os pulmões estão se desenvolvendo. O bebê já reage a sons externos.",
+      28: "O bebê abre e fecha os olhos. Já tem ciclos de sono definidos.",
+      32: "O bebê ganha peso rapidamente. Os ossos estão se fortalecendo.",
+      36: "O bebê já está na posição para o nascimento.",
+      40: "Qualquer dia é dia! O bebê está pronto para conhecer o mundo!"
+    };
+
+    function getDesenvolvimento(semanas) {
+      if (semanas <= 12) return desenvolvimento[12];
+      if (semanas <= 16) return desenvolvimento[16];
+      if (semanas <= 20) return desenvolvimento[20];
+      if (semanas <= 24) return desenvolvimento[24];
+      if (semanas <= 28) return desenvolvimento[28];
+      if (semanas <= 32) return desenvolvimento[32];
+      if (semanas <= 36) return desenvolvimento[36];
+      return desenvolvimento[40];
+    }
+
+    function gerarAlertas() {
+      const alerts = [];
+      const sintomasRecentes = dadosApp.sintomas.slice(-3);
+      const ultimoSintoma = sintomasRecentes[sintomasRecentes.length - 1];
+      if (ultimoSintoma) {
+        alerts.push({
+          tipo: "success",
+          mensagem: `Você relatou "${ultimoSintoma.descricao}" recentemente.`
+        });
+      }
+
+      const ultimaConsulta = dadosApp.consultas[dadosApp.consultas.length - 1];
+      if (ultimaConsulta && ultimaConsulta.recomendacoes) {
+        alerts.push({
+          tipo: "success",
+          mensagem: `${ultimaConsulta.especialidade} recomendou: "${ultimaConsulta.recomendacoes}". 💪`
+        });
+      }
+
+      if (alerts.length === 0) {
+        alerts.push({
+          tipo: "success",
+          mensagem: "✨ Tudo bem por aqui! Continue cuidando de você e do seu bebê! 💖"
+        });
+      }
+
+      return alerts;
+    }
+
+    function renderizarTudo() {
+      console.log('🎨 Renderizando tela...');
+
+      // Elementos que aparecem apenas na tela inicial
+      const nome = dadosApp.config.nome || "Mamãe";
+      const nomeElemento = document.getElementById("nomeUsuario");
+      if (nomeElemento) nomeElemento.innerHTML = nome;
+
+      const nomeBebe = dadosApp.config.nomeBebe || "seu bebê";
+      const nomeBebeHeader = document.getElementById("nomeBebeHeader");
+      if (nomeBebeHeader) nomeBebeHeader.innerHTML = nomeBebe;
+
+      const bebeNome = document.getElementById("bebeNome");
+      if (bebeNome) bebeNome.innerHTML = nomeBebe;
+
+      const idade = calcularIdadeGestacional();
+      const semanasDias = document.getElementById("semanasDias");
+      if (semanasDias) semanasDias.innerHTML = `${idade.semanas} sem ${idade.dias} dias`;
+
+      const progressoBarra = document.getElementById("progressoBarra");
+      if (progressoBarra) {
+        const percentual = (idade.semanas / 40) * 100;
+        progressoBarra.style.width = `${percentual}%`;
+      }
+
+      const diasRestantesSpan = document.getElementById("diasRestantes");
+      if (diasRestantesSpan) diasRestantesSpan.innerHTML = calcularDiasRestantes();
+
+      const bebeTamanho = document.getElementById("bebeTamanho");
+      if (bebeTamanho) {
+        const tamanho = getTamanhoBebe(idade.semanas);
+        bebeTamanho.innerHTML = `É do tamanho de um(a) ${tamanho}! ${idade.semanas >= 12 ? '🍈' : '🌸'}`;
+      }
+
+      const bebeSexo = document.getElementById("bebeSexo");
+      if (bebeSexo) {
+        const sexo = dadosApp.config.sexoBebe || "Menina";
+        const sexoIcon = sexo === 'Menina' ? '👧' : (sexo === 'Menino' ? '👦' : '❓');
+        bebeSexo.innerHTML = `${sexoIcon} ${sexo}`;
+      }
+
+      const bebeIcone = document.getElementById("bebeIcone");
+      if (bebeIcone) {
+        const sexo = dadosApp.config.sexoBebe || "Menina";
+        bebeIcone.innerHTML = sexo === 'Menina' ? '👧' : (sexo === 'Menino' ? '👦' : '👶');
+      }
+
+      const desenvolvimentoEl = document.getElementById("desenvolvimento");
+      if (desenvolvimentoEl) {
+        const desenvolvimentoTexto = getDesenvolvimento(idade.semanas);
+        desenvolvimentoEl.innerHTML = `<strong>Semana ${idade.semanas}</strong> — ${desenvolvimentoTexto}`;
+      }
+
+      // Alertas (apenas na tela inicial)
+      const alerts = gerarAlertas();
+      const alertasContainer = document.getElementById("alertasContainer");
+      if (alertasContainer) {
+        alertasContainer.innerHTML = alerts.map(alert => `
+                    <div class="alerta-card ${alert.tipo === 'critical' ? 'critical' : 'success'}">
+                        ${alert.mensagem}
+                    </div>
+                `).join("");
+      }
+
+      // Resumo da semana (apenas na tela inicial)
+      const resumoSemana = document.getElementById("resumoSemana");
+      if (resumoSemana) {
+        resumoSemana.innerHTML = `
+                    <p>🌸 <strong>${idade.semanas} semanas</strong> de gestação</p>
+                    <p>📏 Tamanho do bebê: <strong>${getTamanhoBebe(idade.semanas)}</strong></p>
+                    <p>💡 ${getDesenvolvimento(idade.semanas)}</p>
+                `;
+      }
+
+      // Últimos registros (apenas na tela inicial)
+      let registrosHtml = "";
+      const ultimoPeso = dadosApp.registrosPeso[dadosApp.registrosPeso.length - 1];
+      if (ultimoPeso) {
+        registrosHtml += `<div class="registro-item">⚖️ Último peso: <strong>${ultimoPeso.peso} kg</strong></div>`;
+      }
+      const ultimaPressao = dadosApp.pressaoArterial[dadosApp.pressaoArterial.length - 1];
+      if (ultimaPressao) {
+        registrosHtml += `<div class="registro-item">❤️ Última pressão: <strong>${ultimaPressao.valores} mmHg</strong></div>`;
+      }
+      const ultimoMovimento = dadosApp.movimentosFetais[dadosApp.movimentosFetais.length - 1];
+      if (ultimoMovimento) {
+        registrosHtml += `<div class="registro-item">👶 Últimos movimentos: <strong>${ultimoMovimento.quantidade}</strong> movimentos/hora</div>`;
+      }
+      if (registrosHtml === "") {
+        registrosHtml = '<div class="empty-state">Nenhum registro ainda. Comece a acompanhar sua gestação! 💖</div>';
+      }
+      const ultimosRegistros = document.getElementById("ultimosRegistros");
+      if (ultimosRegistros) ultimosRegistros.innerHTML = registrosHtml;
+
+      // ========== SEÇÃO SAÚDE ==========
+      const pesoLista = dadosApp.registrosPeso.slice().reverse().slice(0, 5).map(r =>
+        `<div class="registro-item">📅 ${new Date(r.data).toLocaleDateString('pt-BR')}: ${r.peso} kg</div>`
+      ).join("");
+      const listaPesos = document.getElementById("listaPesos");
+      if (listaPesos) listaPesos.innerHTML = pesoLista || '<div class="empty-state">Nenhum peso registrado</div>';
+
+      const graficoPeso = document.getElementById("graficoPeso");
+      if (graficoPeso && dadosApp.registrosPeso.length > 0) {
+        const ultimosPesos = dadosApp.registrosPeso.slice(-7);
+        graficoPeso.innerHTML = ultimosPesos.map(r => `
+                    <div class="barra-peso">
+                        <div class="barra" style="height: ${Math.max(40, r.peso * 1.5)}px;"></div>
+                        <div>${r.peso}kg</div>
+                        <div style="font-size: 10px;">${new Date(r.data).toLocaleDateString('pt-BR').slice(0, 5)}</div>
+                    </div>
+                `).join("");
+      } else if (graficoPeso) {
+        graficoPeso.innerHTML = '<div class="empty-state">Nenhum registro de peso</div>';
+      }
+
+      const listaPressao = document.getElementById("listaPressao");
+      if (listaPressao) {
+        listaPressao.innerHTML = dadosApp.pressaoArterial.slice().reverse().slice(0, 5).map(p =>
+          `<div class="registro-item">📅 ${new Date(p.data).toLocaleDateString('pt-BR')}: ${p.valores} mmHg</div>`
+        ).join("") || '<div class="empty-state">Nenhuma medição de pressão</div>';
+      }
+
+      const listaMovimentos = document.getElementById("listaMovimentos");
+      if (listaMovimentos) {
+        listaMovimentos.innerHTML = dadosApp.movimentosFetais.slice().reverse().slice(0, 5).map(m =>
+          `<div class="registro-item">📅 ${new Date(m.data).toLocaleDateString('pt-BR')}: ${m.quantidade} movimentos/hora</div>`
+        ).join("") || '<div class="empty-state">Nenhum registro de movimentos</div>';
+      }
+
+      const listaSintomas = document.getElementById("listaSintomas");
+      if (listaSintomas) {
+        listaSintomas.innerHTML = dadosApp.sintomas.slice().reverse().slice(0, 5).map(s =>
+          `<div class="registro-item">📅 ${new Date(s.data).toLocaleDateString('pt-BR')}: ${s.descricao}</div>`
+        ).join("") || '<div class="empty-state">Nenhum sintoma registrado</div>';
+      }
+
+      // ========== SEÇÃO EXAMES ==========
+      const listaExames = document.getElementById("listaExames");
+      if (listaExames) {
+        listaExames.innerHTML = dadosApp.exames.slice().reverse().slice(0, 5).map(e =>
+          `<div class="registro-item">🔬 ${e.nome}: ${e.valor} ${e.unidade} (${new Date(e.data).toLocaleDateString('pt-BR')})</div>`
+        ).join("") || '<div class="empty-state">Nenhum exame registrado</div>';
+      }
+
+      const listaConsultas = document.getElementById("listaConsultas");
+      if (listaConsultas) {
+        listaConsultas.innerHTML = dadosApp.consultas.slice().reverse().slice(0, 5).map(c =>
+          `<div class="registro-item">👩‍⚕️ ${c.especialidade}: ${c.recomendacoes || "Acompanhamento"} (${new Date(c.data).toLocaleDateString('pt-BR')})</div>`
+        ).join("") || '<div class="empty-state">Nenhuma consulta registrada</div>';
+      }
+
+      const insightsContainer = document.getElementById("insightsContainer");
+      if (insightsContainer) {
+        const ultimoPesoNum = dadosApp.registrosPeso[dadosApp.registrosPeso.length - 1]?.peso || 0;
+        const pesoInicial = dadosApp.config.pesoPreGestacional || 0;
+        const ganhoTotal = ultimoPesoNum - pesoInicial;
+        insightsContainer.innerHTML = `
+                    <div class="registro-item">📈 Ganho total: ${ganhoTotal > 0 ? ganhoTotal.toFixed(1) : "---"} kg</div>
+                    <div class="registro-item">💡 ${idade.semanas <= 12 ? "Foque em ácido fólico e hidratação" : (idade.semanas <= 28 ? "Aumente o consumo de cálcio" : "Descanse bastante")}</div>
+                `;
+      }
+
+      // Esconder loading e mostrar app
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("appContainer").classList.remove("container-oculto");
+      document.getElementById("appContainer").classList.add("container-visivel");
+    }
+
     // Navegação entre seções
-    document.querySelectorAll('.menu-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const secao = item.dataset.secao;
+    function initNavegacao() {
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const secao = item.dataset.secao;
 
-        // Atualizar menu
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
+          // Atualizar menu
+          document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
 
-        // Atualizar seções
-        document.querySelectorAll('.secao').forEach(s => s.classList.remove('active'));
-        document.getElementById(`secao-${secao}`).classList.add('active');
+          // Atualizar seções
+          document.querySelectorAll('.secao').forEach(s => s.classList.remove('active'));
+          document.getElementById(`secao-${secao}`).classList.add('active');
+        });
       });
-    });
+    }
 
     function mostrarModalRegistro() {
-      // Simples: redirecionar para a seção Saúde
       document.querySelector('.menu-item[data-secao="saude"]').click();
+    }
+
+    // ========== FUNÇÕES DE ADIÇÃO ==========
+    function adicionarPeso() {
+      const peso = prompt("⚖️ Digite seu peso atual (kg):", "");
+      if (peso && !isNaN(parseFloat(peso))) {
+        dadosApp.registrosPeso.push({
+          data: new Date().toISOString().slice(0, 10),
+          peso: parseFloat(peso)
+        });
+        salvarDados();
+        renderizarTudo();
+        alert("✅ Peso registrado!");
+      }
+    }
+
+    function adicionarPressao() {
+      const sistolica = prompt("❤️ Pressão sistólica (máxima):", "");
+      const diastolica = prompt("❤️ Pressão diastólica (mínima):", "");
+      if (sistolica && diastolica) {
+        dadosApp.pressaoArterial.push({
+          data: new Date().toISOString().slice(0, 10),
+          valores: `${sistolica}/${diastolica}`
+        });
+        salvarDados();
+        renderizarTudo();
+        alert("✅ Pressão registrada!");
+      }
+    }
+
+    function adicionarMovimento() {
+      const quantidade = prompt("👶 Quantos movimentos em 1 hora?", "");
+      if (quantidade && !isNaN(parseInt(quantidade))) {
+        dadosApp.movimentosFetais.push({
+          data: new Date().toISOString().slice(0, 10),
+          quantidade: parseInt(quantidade)
+        });
+        salvarDados();
+        renderizarTudo();
+        alert("✅ Movimentos registrados!");
+      }
+    }
+
+    function adicionarSintoma() {
+      const sintoma = prompt("📝 Como você está se sentindo?", "");
+      if (sintoma && sintoma.trim()) {
+        dadosApp.sintomas.push({
+          data: new Date().toISOString().slice(0, 10),
+          descricao: sintoma
+        });
+        salvarDados();
+        renderizarTudo();
+        alert("✅ Sintoma registrado!");
+      }
+    }
+
+    function adicionarExame() {
+      const nome = prompt("🔬 Nome do exame:", "");
+      const valor = prompt("📊 Valor:", "");
+      const unidade = prompt("📏 Unidade:", "");
+      if (nome && valor) {
+        dadosApp.exames.push({
+          nome: nome,
+          data: new Date().toISOString().slice(0, 10),
+          valor: parseFloat(valor),
+          unidade: unidade || ""
+        });
+        salvarDados();
+        renderizarTudo();
+        alert("✅ Exame registrado!");
+      }
+    }
+
+    function adicionarConsulta() {
+      const especialidade = prompt("👩‍⚕️ Especialidade:", "");
+      const recomendacoes = prompt("💡 Recomendações:", "");
+      if (especialidade) {
+        dadosApp.consultas.push({
+          especialidade: especialidade,
+          data: new Date().toISOString().slice(0, 10),
+          recomendacoes: recomendacoes || ""
+        });
+        salvarDados();
+        renderizarTudo();
+        alert("✅ Consulta registrada!");
+      }
+    }
+
+    function salvarConfig() {
+      dadosApp.config = {
+        nome: document.getElementById("nome").value,
+        altura: parseFloat(document.getElementById("altura").value) || 0,
+        pesoPreGestacional: parseFloat(document.getElementById("pesoPre").value) || 0,
+        dpp: document.getElementById("dpp").value,
+        nomeBebe: document.getElementById("nomeBebe").value,
+        sexoBebe: document.getElementById("sexoBebe").value
+      };
+      salvarDados();
+      renderizarTudo();
+      alert("✅ Informações salvas!");
+    }
+
+    // ========== INICIALIZAÇÃO ==========
+    if (carregarDados()) {
+      renderizarTudo();
+      initNavegacao();
+    }
+
+    // Preencher formulário de perfil
+    if (dadosApp && dadosApp.config.dpp) {
+      setTimeout(() => {
+        document.getElementById("nome").value = dadosApp.config.nome || "";
+        document.getElementById("altura").value = dadosApp.config.altura || "";
+        document.getElementById("pesoPre").value = dadosApp.config.pesoPreGestacional || "";
+        document.getElementById("dpp").value = dadosApp.config.dpp || "";
+        document.getElementById("nomeBebe").value = dadosApp.config.nomeBebe || "";
+        document.getElementById("sexoBebe").value = dadosApp.config.sexoBebe || "Menina";
+      }, 100);
     }
   </script>
 </body>
