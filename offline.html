@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - AcompanheGest</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .offline-container {
+      background: white;
+      border-radius: 48px;
+      padding: 40px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .offline-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      color: #f8a5c2;
+      margin-bottom: 16px;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    button {
+      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .dicas {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #f0e0e8;
+      font-size: 14px;
+      color: #b87c9a;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="offline-container">
+    <div class="offline-icon">📡</div>
+    <h1>Você está offline</h1>
+    <p>
+      O AcompanheGest funciona melhor com internet,<br>
+      mas seus dados já estão salvos no seu celular!
+    </p>
+    <button onclick="tentarRecarregar()">🔁 Tentar novamente</button>
+
+    <div class="dicas">
+      💡 Dica: O app já salvou todos os seus registros.<br>
+      Quando a internet voltar, tudo estará aqui!
+    </div>
+  </div>
+
+  <script>
+    function tentarRecarregar() {
+      window.location.reload();
+    }
+
+    // Tenta recarregar quando a internet voltar
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+
+</html>

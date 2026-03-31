@@ -1,0 +1,391 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #fef7f0 0%, #ffe6f0 100%);
+  color: #4a4a6a;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+/* Header com logo */
+.header {
+  background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
+  color: white;
+  border-radius: 32px;
+  padding: 24px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.logo-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon-mini {
+  font-size: 32px;
+  background: rgba(255, 255, 255, 0.3);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-mini h1 {
+  font-size: 1.8rem;
+  color: white;
+  margin: 0;
+}
+
+.logo-mini .highlight {
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.02);
+}
+
+.saudacao {
+  text-align: center;
+  margin: 16px 0;
+}
+
+.saudacao h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.gestacao-info {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.dias-counter {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 60px;
+  padding: 12px 24px;
+  display: inline-block;
+  width: auto;
+  margin: 0 auto;
+}
+
+.dias-numero {
+  font-size: 2rem;
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.dias-texto {
+  font-size: 1rem;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 28px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ffe0e8;
+  transition: all 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #f8a5c2;
+  font-size: 1.4rem;
+}
+
+.card-icon {
+  font-size: 1.6rem;
+}
+
+.card-alerts {
+  background: linear-gradient(135deg, #fff9f5 0%, #fff5fc 100%);
+}
+
+/* Alertas */
+.alert-box {
+  background: #fff3e0;
+  border-left: 6px solid #f7a74e;
+  padding: 16px;
+  border-radius: 20px;
+  margin: 12px 0;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.alert-critical {
+  border-left-color: #e74c3c;
+  background: #ffeaea;
+}
+
+.alert-warning {
+  border-left-color: #f39c12;
+}
+
+.alert-success {
+  border-left-color: #2ecc71;
+  background: #e8f8f0;
+}
+
+/* Badges */
+.badge {
+  background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+  color: white;
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin: 4px;
+  font-weight: 500;
+}
+
+/* Flex */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Botões */
+button {
+  background: #f8a5c2;
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background: #e891b0;
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+  padding: 12px 28px;
+  font-size: 1rem;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.btn-secondary {
+  background: #f0d5e0;
+  color: #b87c9a;
+}
+
+.btn-secondary:hover {
+  background: #e8c5d4;
+}
+
+/* Inputs */
+label {
+  display: block;
+  margin: 12px 0 4px;
+  color: #b87c9a;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #f0e0e8;
+  border-radius: 24px;
+  margin: 4px 0 8px;
+  font-family: inherit;
+  transition: all 0.3s;
+  background: #fefafc;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #f8a5c2;
+  background: white;
+}
+
+/* Registros */
+.registro-item {
+  background: #fefafc;
+  border-radius: 20px;
+  padding: 14px 16px;
+  margin: 8px 0;
+  border-left: 4px solid #f8a5c2;
+  transition: all 0.2s;
+}
+
+.registro-item:hover {
+  transform: translateX(4px);
+  background: #fff5fc;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #c7a5b8;
+  background: #fefafc;
+  border-radius: 24px;
+  font-size: 0.9rem;
+}
+
+/* Grid */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Gráfico de peso */
+.grafico-peso {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 16px 0;
+  min-height: 180px;
+  align-items: flex-end;
+}
+
+.barra-peso {
+  text-align: center;
+  width: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.barra {
+  background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+  width: 45px;
+  border-radius: 20px 20px 8px 8px;
+  transition: height 0.5s ease;
+  margin-bottom: 8px;
+}
+
+/* Insights */
+.insight-card {
+  background: linear-gradient(135deg, #fef5fc 0%, #f9f0ff 100%);
+  border-radius: 24px;
+  padding: 20px;
+  margin-top: 12px;
+  border: 1px solid #f0d5e8;
+}
+
+.insight-card strong {
+  color: #f8a5c2;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #c7a5b8;
+  margin: 32px 0 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0e0e8;
+}
+
+.footer p {
+  margin: 8px 0;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+  }
+
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .saudacao h2 {
+    font-size: 1.4rem;
+  }
+
+  .dias-numero {
+    font-size: 1.5rem;
+  }
+
+  .card h2 {
+    font-size: 1.2rem;
+  }
+}

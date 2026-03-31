@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Gerador de Ícones AcompanheGest</title>
+</head>
+
+<body>
+  <h1>Gerador de Ícones para o AcompanheGest</h1>
+  <p>Clique nos links para baixar os ícones:</p>
+
+  <canvas id="canvas" width="512" height="512" style="display:none;"></canvas>
+
+  <div id="links"></div>
+
+  <script>
+    const tamanhos = [72, 96, 128, 144, 152, 192, 384, 512];
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    function gerarIcone(tamanho) {
+      canvas.width = tamanho;
+      canvas.height = tamanho;
+
+      // Fundo gradiente
+      const grad = ctx.createLinearGradient(0, 0, tamanho, tamanho);
+      grad.addColorStop(0, '#f8a5c2');
+      grad.addColorStop(1, '#c7b9ff');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, tamanho, tamanho);
+
+      // Flor
+      ctx.fillStyle = 'white';
+      ctx.font = `${tamanho * 0.5}px "Segoe UI Emoji"`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🌸', tamanho / 2, tamanho / 2);
+
+      // Borda
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.lineWidth = tamanho * 0.03;
+      ctx.strokeRect(tamanho * 0.05, tamanho * 0.05, tamanho * 0.9, tamanho * 0.9);
+
+      // Baixar
+      const link = document.createElement('a');
+      link.download = `icon-${tamanho}.png`;
+      link.href = canvas.toDataURL();
+      link.textContent = `Baixar ícone ${tamanho}x${tamanho}`;
+      link.style.display = 'block';
+      link.style.margin = '10px';
+      document.getElementById('links').appendChild(link);
+    }
+
+    tamanhos.forEach(t => gerarIcone(t));
+
+    // Gerar favicon.ico
+    function gerarFavicon() {
+      canvas.width = 32;
+      canvas.height = 32;
+      const grad = ctx.createLinearGradient(0, 0, 32, 32);
+      grad.addColorStop(0, '#f8a5c2');
+      grad.addColorStop(1, '#c7b9ff');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 32, 32);
+      ctx.fillStyle = 'white';
+      ctx.font = `20px "Segoe UI Emoji"`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🌸', 16, 16);
+
+      const link = document.createElement('a');
+      link.download = `favicon.ico`;
+      link.href = canvas.toDataURL();
+      link.textContent = `Baixar favicon.ico`;
+      link.style.display = 'block';
+      link.style.margin = '10px';
+      document.getElementById('links').appendChild(link);
+    }
+    gerarFavicon();
+  </script>
+</body>
+
+</html>
