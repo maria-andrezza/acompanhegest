@@ -20,7 +20,7 @@ class AuthSystem {
     );
   }
 
-  // Hash simples para senhas (não é criptografia forte, mas suficiente para demo local)
+  // Hash simples para senhas
   hashSenha(senha) {
     let hash = 0;
     for (let i = 0; i < senha.length; i++) {
@@ -59,6 +59,7 @@ class AuthSystem {
       sintomas: [],
       exames: [],
       consultas: [],
+      registrosDiarios: [],
     };
 
     localStorage.setItem(

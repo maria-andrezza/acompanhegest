@@ -14,7 +14,7 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
       min-height: 100vh;
       display: flex;
@@ -97,11 +97,32 @@
     .dicas li {
       margin: 8px 0;
     }
+
+    .logo {
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      font-size: 48px;
+      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
   </style>
 </head>
 
 <body>
   <div class="offline-container">
+    <div class="logo">
+      <div class="logo-icon">
+        <span>🌸</span>
+      </div>
+    </div>
     <div class="offline-icon">📡</div>
     <h1>Você está offline</h1>
     <p>
@@ -116,6 +137,7 @@
         <li>📝 Revisar seus registros anteriores</li>
         <li>👶 Ver o desenvolvimento do bebê</li>
         <li>📊 Consultar suas estatísticas</li>
+        <li>💾 Seus dados estão seguros no seu celular</li>
       </ul>
       <p style="margin-top: 16px;">Quando a internet voltar, todos os novos registros serão salvos normalmente!</p>
     </div>
