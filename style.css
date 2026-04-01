@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -17,37 +18,74 @@ body {
     sans-serif;
   background: #fdfbf9;
   color: #1a2b48;
-  padding-bottom: 85px;
+  padding-bottom: 70px;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ========== BOTÃO DE SAIR FLUTUANTE ========== */
+/* ========== IMAGEM DE FUNDO ========== */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%2388E2B7' fill-opacity='0.08' d='M50,20 L55,35 L70,35 L60,45 L65,60 L50,50 L35,60 L40,45 L30,35 L45,35 Z'/%3E%3Ccircle cx='25' cy='75' r='8' fill='%23C7B9FF' fill-opacity='0.08'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 45px;
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(253, 251, 249, 0.9);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.app-loaded::before {
+  opacity: 1;
+}
+
+#appContainer,
+.menu-inferior,
+.btn-sair-flutuante {
+  position: relative;
+  z-index: 10;
+}
+
+/* ========== BOTÃO DE SAIR ========== */
 .btn-sair-flutuante {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
-  padding: 8px 18px;
-  border-radius: 40px;
+  padding: 6px 12px;
+  border-radius: 30px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  gap: 6px;
   cursor: pointer;
   z-index: 1000;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   color: #8d9bb0;
   border: 1px solid #e8e2dc;
-  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.btn-sair-flutuante:hover {
-  background: white;
-  color: #ff6b6b;
-  border-color: #ff6b6b;
+.btn-sair-flutuante:active {
+  transform: scale(0.96);
 }
 
 /* ========== MENU INFERIOR ========== */
@@ -60,25 +98,25 @@ body {
   backdrop-filter: blur(12px);
   display: flex;
   justify-content: space-around;
-  padding: 10px 20px 22px;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
+  padding: 8px 12px 18px;
   border-top: 1px solid rgba(136, 226, 183, 0.2);
   z-index: 100;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .menu-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 40px;
-  transition: all 0.2s;
+  padding: 6px 10px;
+  border-radius: 30px;
   color: #b8c4d0;
   font-family: "Inter", sans-serif;
+  transition: all 0.2s;
 }
 
 .menu-item.active {
@@ -87,36 +125,23 @@ body {
 }
 
 .menu-icon {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .menu-label {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 500;
 }
 
 /* ========== HEADER ========== */
 .header-moderno {
-  padding: 20px 20px 0 20px;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.logo-pequeno {
-  font-size: 18px;
-  font-weight: 600;
-  color: #88e2b7;
+  padding: 16px 16px 0 16px;
 }
 
 .saudacao {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
-  color: #1a2b48;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   line-height: 1.3;
 }
 
@@ -124,146 +149,127 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 16px 0;
+  margin: 12px 0;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
 
 .semanas-dias {
   background: #f5f0ed;
-  padding: 6px 14px;
-  border-radius: 40px;
-  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 11px;
   font-weight: 500;
-  color: #1a2b48;
 }
 
 .progresso-container {
   background: #f0eae5;
   border-radius: 20px;
-  height: 6px;
+  height: 5px;
   flex: 1;
-  margin: 0 16px;
+  margin: 0 10px;
   overflow: hidden;
 }
 
 .progresso-barra {
   background: #88e2b7;
   height: 100%;
-  border-radius: 20px;
   width: 0%;
-  transition: width 0.5s ease;
+  transition: width 0.5s;
 }
 
 .dias-faltam {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
   color: #88e2b7;
-  display: inline-block;
-  margin-right: 4px;
 }
 
-/* ========== CARD DO BEBÊ (GRADIENTE) ========== */
+/* ========== CARD DO BEBÊ ========== */
 .bebe-card {
   background: linear-gradient(135deg, #e8f5e9 0%, #fce4ec 100%);
-  border-radius: 32px;
-  padding: 24px;
-  margin: 16px;
+  border-radius: 28px;
+  padding: 16px;
+  margin: 12px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   flex-wrap: wrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .bebe-ilustracao {
-  width: 80px;
-  height: 80px;
+  width: 55px;
+  height: 55px;
   background: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.bebe-info {
-  flex: 1;
+  font-size: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .bebe-nome {
-  font-size: 24px;
+  font-size: 17px;
   font-weight: bold;
-  color: #1a2b48;
-  margin-bottom: 4px;
 }
 
 .bebe-tamanho {
   color: #5d6f88;
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: 11px;
+  margin-bottom: 4px;
 }
 
 .bebe-sexo {
   background: white;
-  padding: 4px 12px;
+  padding: 3px 8px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 10px;
   display: inline-block;
-  color: #1a2b48;
 }
 
 .desenvolvimento {
-  background: rgba(255, 255, 255, 0.8);
-  padding: 12px 16px;
-  border-radius: 24px;
-  margin-top: 12px;
-  font-size: 13px;
-  color: #5d6f88;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 10px;
+  border-radius: 18px;
+  margin-top: 8px;
+  font-size: 10px;
   line-height: 1.4;
+  color: #5d6f88;
 }
 
 /* ========== ALERTAS ========== */
 .alertas-container {
-  padding: 0 16px;
-  margin-bottom: 20px;
+  padding: 0 12px;
+  margin-bottom: 14px;
 }
 
 .alerta-card {
   background: #fff0e6;
-  padding: 14px 16px;
-  border-radius: 24px;
-  margin-bottom: 12px;
-  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  font-size: 11px;
   color: #1a2b48;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  border-left: 3px solid #ffb347;
 }
 
-/* ========== CARDS PRINCIPAIS ========== */
+/* ========== CARDS ========== */
 .card-secao {
   background: white;
-  border-radius: 28px;
-  padding: 20px;
-  margin: 0 16px 20px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-}
-
-.card-secao:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  border-radius: 24px;
+  padding: 16px;
+  margin: 0 12px 14px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(136, 226, 183, 0.1);
 }
 
 .card-secao h3 {
-  font-size: 18px;
-  margin-bottom: 16px;
-  color: #1a2b48;
-  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 12px;
   border-bottom: 2px solid #f0eae5;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
+  color: #1a2b48;
 }
 
 /* ========== BOTÕES ========== */
@@ -272,21 +278,18 @@ body {
   background: #88e2b7;
   color: #1a2b48;
   border: none;
-  padding: 14px 24px;
-  border-radius: 48px;
-  font-weight: 700;
-  font-size: 14px;
+  padding: 12px 18px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
   width: 100%;
   transition: all 0.2s;
-  font-family: "Inter", sans-serif;
 }
 
-.btn-registro:hover,
-.btn-modal:hover {
-  background: #6fcf97;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(136, 226, 183, 0.3);
+.btn-registro:active,
+.btn-modal:active {
+  transform: scale(0.98);
 }
 
 /* ========== INPUTS ========== */
@@ -294,14 +297,12 @@ input,
 select,
 textarea {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: 1px solid #e8e2dc;
-  border-radius: 28px;
-  font-size: 14px;
-  transition: all 0.2s;
+  border-radius: 24px;
+  font-size: 13px;
   background: #fefcfa;
   font-family: "Inter", sans-serif;
-  color: #1a2b48;
 }
 
 input:focus,
@@ -309,73 +310,67 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: #88e2b7;
-  box-shadow: 0 0 0 3px rgba(136, 226, 183, 0.1);
+  box-shadow: 0 0 0 2px rgba(136, 226, 183, 0.2);
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   color: #5d6f88;
+  font-size: 11px;
   font-weight: 500;
-  font-size: 12px;
   letter-spacing: 0.3px;
 }
 
-/* ========== SÍNTOMAS (CHECKBOX) ========== */
+/* ========== SÍNTOMAS ========== */
 .sintomas-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8px;
 }
 
 .sintoma-checkbox {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: #fefcfa;
-  padding: 10px 14px;
-  border-radius: 40px;
+  padding: 8px 12px;
+  border-radius: 30px;
   border: 1px solid #e8e2dc;
   cursor: pointer;
+  font-size: 12px;
   transition: all 0.2s;
-  font-size: 13px;
-  color: #1a2b48;
 }
 
-.sintoma-checkbox:hover {
-  background: #f0f9f4;
-  border-color: #88e2b7;
+.sintoma-checkbox:active {
+  transform: scale(0.98);
 }
 
 .sintoma-checkbox input {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  cursor: pointer;
+  width: 16px;
   accent-color: #88e2b7;
 }
 
-/* ========== HUMOR (RADIO) ========== */
+/* ========== HUMOR ========== */
 .humor-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .humor-option {
   background: #fefcfa;
   padding: 8px;
-  border-radius: 40px;
+  border-radius: 30px;
   border: 1px solid #e8e2dc;
   cursor: pointer;
-  transition: all 0.2s;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
+  transition: all 0.2s;
 }
 
-.humor-option:hover {
-  background: #f0f9f4;
-  border-color: #88e2b7;
+.humor-option:active {
+  transform: scale(0.95);
 }
 
 .humor-option:has(input:checked) {
@@ -390,116 +385,87 @@ label {
 /* ========== GRÁFICOS ========== */
 .grafico-container {
   background: white;
-  border-radius: 24px;
-  padding: 12px;
-  margin-bottom: 12px;
-  max-width: 100%;
+  border-radius: 20px;
+  padding: 8px;
+  margin-bottom: 10px;
   overflow-x: auto;
 }
 
 .grafico-container canvas {
-  max-height: 180px !important;
-  height: 180px !important;
+  max-height: 140px !important;
+  height: 140px !important;
   width: 100% !important;
-}
-
-#pesoChart,
-#hemoglobinaChart {
-  max-height: 160px !important;
-  height: 160px !important;
 }
 
 .ganho-ideal {
   background: #f0f9f4;
-  padding: 12px 16px;
-  border-radius: 20px;
-  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  font-size: 11px;
   color: #88e2b7;
-  margin-top: 12px;
+  margin-top: 10px;
   border-left: 3px solid #88e2b7;
-  font-weight: 500;
-}
-
-.detalhes-parametro {
-  margin-top: 12px;
 }
 
 /* ========== HISTÓRICO ========== */
 .historico-item {
   background: #fefcfa;
-  padding: 14px;
-  border-radius: 20px;
-  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  margin-bottom: 10px;
   border-left: 3px solid #88e2b7;
-  transition: all 0.2s;
-}
-
-.historico-item:hover {
-  transform: translateX(4px);
-  background: #ffffff;
 }
 
 .historico-data {
-  font-size: 12px;
+  font-size: 10px;
   color: #88e2b7;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .historico-peso {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
-  color: #1a2b48;
-  margin: 6px 0;
+  margin: 4px 0;
 }
 
 .historico-sintomas {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 8px 0;
+  gap: 5px;
+  margin: 6px 0;
 }
 
 .sintoma-badge {
   background: #f0f9f4;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 9px;
   color: #88e2b7;
 }
 
-.historico-humor {
-  display: inline-block;
-  background: #88e2b7;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  margin-top: 6px;
-}
-
 .historico-movimentos {
-  font-size: 12px;
+  font-size: 10px;
   color: #5d6f88;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .historico-obs {
-  font-size: 12px;
+  font-size: 10px;
   color: #8d9bb0;
   font-style: italic;
-  margin-top: 6px;
-  padding-top: 6px;
+  margin-top: 4px;
+  padding-top: 4px;
   border-top: 1px dashed #e8e2dc;
 }
 
-/* ========== SUBMENU CÁPSULA ========== */
+/* ========== SUBMENU ========== */
 .submenu-exames {
   display: flex;
-  gap: 12px;
-  margin: 0 16px 20px 16px;
+  gap: 8px;
+  margin: 0 12px 14px 12px;
   background: white;
-  border-radius: 48px;
+  border-radius: 40px;
   padding: 4px;
   border: 1px solid #e8e2dc;
 }
@@ -508,14 +474,13 @@ label {
   flex: 1;
   background: transparent;
   border: none;
-  padding: 10px;
-  border-radius: 40px;
+  padding: 8px;
+  border-radius: 36px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
   color: #b8c4d0;
-  font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  transition: all 0.2s;
 }
 
 .submenu-btn.active {
@@ -525,79 +490,97 @@ label {
 
 .submenu-conteudo {
   display: none;
-  padding: 0 16px;
+  padding: 0 12px;
 }
 
 .submenu-conteudo.active {
   display: block;
-  animation: fadeIn 0.3s ease;
 }
 
-/* ========== EXAMES E CONSULTAS ========== */
-.exame-item,
-.consulta-item {
+/* ========== EXAMES ========== */
+.exame-item {
   background: #fefcfa;
-  padding: 14px;
-  border-radius: 20px;
-  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  margin-bottom: 10px;
   border-left: 3px solid #88e2b7;
-  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.exame-item:hover,
-.consulta-item:hover {
-  transform: translateX(4px);
-  background: #ffffff;
+.exame-info {
+  flex: 1;
 }
 
-.exame-data,
-.consulta-data {
-  font-size: 12px;
+.exame-data {
+  font-size: 10px;
   color: #88e2b7;
-  font-weight: 600;
-  margin-bottom: 4px;
 }
 
-.exame-nome,
-.consulta-especialidade {
+.exame-nome {
   font-weight: 600;
-  font-size: 15px;
-  color: #1a2b48;
-  margin: 6px 0;
+  font-size: 13px;
+  margin: 3px 0;
 }
 
 .exame-valor {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
   color: #88e2b7;
 }
 
+.exame-emoji {
+  font-size: 26px;
+}
+
+/* ========== CONSULTAS ========== */
+.consulta-item {
+  background: #fefcfa;
+  padding: 12px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  border-left: 3px solid #88e2b7;
+}
+
+.consulta-data {
+  font-size: 10px;
+  color: #88e2b7;
+}
+
+.consulta-especialidade {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 4px 0;
+}
+
 .consulta-achados {
   background: #f5f0ed;
-  padding: 8px 12px;
-  border-radius: 16px;
-  margin: 8px 0;
-  font-size: 13px;
-  color: #1a2b48;
+  padding: 8px 10px;
+  border-radius: 14px;
+  margin: 6px 0;
+  font-size: 11px;
 }
 
 .consulta-recomendacoes {
   background: #fff0e6;
-  padding: 8px 12px;
-  border-radius: 16px;
-  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  font-size: 11px;
   border-left: 3px solid #ffb347;
-  color: #1a2b48;
 }
 
-/* ========== PARÂMETRO SELECTOR ========== */
-.parametro-selector {
-  margin-bottom: 16px;
+/* ========== FILTRO ========== */
+.filtro-exames {
+  margin-bottom: 12px;
 }
 
-.parametro-selector select {
+.filtro-exames select {
+  padding: 10px;
+  font-size: 13px;
   background: #fefcfa;
-  cursor: pointer;
 }
 
 /* ========== MODAL ========== */
@@ -613,50 +596,26 @@ label {
   justify-content: center;
   align-items: center;
   z-index: 2000;
-  animation: fadeIn 0.2s ease;
 }
 
 .modal-content {
   background: white;
-  padding: 28px;
-  border-radius: 32px;
-  max-width: 90%;
-  width: 420px;
-  max-height: 80vh;
+  padding: 20px;
+  border-radius: 28px;
+  max-width: 92%;
+  width: 92%;
+  max-height: 85vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .close-modal {
   position: absolute;
-  top: 16px;
-  right: 20px;
-  font-size: 28px;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
   cursor: pointer;
   color: #b8c4d0;
-  transition: all 0.2s;
   width: 32px;
   height: 32px;
   display: flex;
@@ -665,39 +624,37 @@ label {
   border-radius: 50%;
 }
 
-.close-modal:hover {
-  color: #ff6b6b;
-  background: #fff5f5;
+.close-modal:active {
+  background: #f0eae5;
 }
 
-/* ========== GRID E UTILIDADES ========== */
+/* ========== GRID ========== */
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
+  padding: 30px 16px;
   color: #b8c4d0;
-  font-size: 13px;
   background: #fefcfa;
-  border-radius: 24px;
+  border-radius: 20px;
+  font-size: 12px;
 }
 
 .footer-app {
   text-align: center;
-  padding: 20px 16px;
-  font-size: 11px;
+  padding: 14px;
+  font-size: 9px;
   color: #b8c4d0;
-  border-top: 1px solid #e8e2dc;
-  margin-top: 16px;
+  border-top: 1px solid #f0eae5;
+  margin-top: 8px;
 }
 
 .secao {
   display: none;
-  animation: fadeIn 0.3s ease;
 }
 
 .secao.active {
@@ -706,10 +663,9 @@ label {
 
 .loading {
   text-align: center;
-  padding: 60px;
+  padding: 50px;
   color: #88e2b7;
-  font-size: 16px;
-  font-family: "Inter", sans-serif;
+  font-size: 14px;
 }
 
 .container-oculto {
@@ -718,9 +674,21 @@ label {
 
 .container-visivel {
   display: block;
+  animation: fadeIn 0.4s ease;
 }
 
-/* ========== RESPONSIVIDADE ========== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== RESPONSIVIDADE PARA IPHONE ========== */
 @media (max-width: 480px) {
   .sintomas-grid {
     grid-template-columns: 1fr;
@@ -728,27 +696,139 @@ label {
 
   .humor-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
   }
 
   .grid-2 {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
   .bebe-card {
-    margin: 12px;
+    margin: 10px;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .bebe-ilustracao {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  .bebe-nome {
+    font-size: 15px;
+  }
+
+  .saudacao {
+    font-size: 18px;
+  }
+
+  .dias-faltam {
+    font-size: 18px;
+  }
+
+  .semanas-dias {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .card-secao {
+    padding: 12px;
+    margin: 0 10px 12px 10px;
+  }
+
+  .card-secao h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .menu-item {
+    padding: 4px 8px;
+  }
+
+  .menu-icon {
+    font-size: 18px;
+  }
+
+  .menu-label {
+    font-size: 8px;
+  }
+
+  .grafico-container canvas {
+    max-height: 120px !important;
+    height: 120px !important;
+  }
+
+  .exame-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .exame-emoji {
+    font-size: 24px;
+    margin-top: 4px;
+  }
+
+  .modal-content {
     padding: 16px;
-    gap: 12px;
+    width: 95%;
+  }
+
+  .btn-registro,
+  .btn-modal {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .alerta-card {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .historico-item {
+    padding: 10px;
+  }
+
+  .historico-peso {
+    font-size: 14px;
+  }
+
+  .submenu-exames {
+    margin: 0 10px 12px 10px;
+  }
+
+  .submenu-btn {
+    padding: 6px;
+    font-size: 11px;
+  }
+
+  .submenu-conteudo {
+    padding: 0 10px;
+  }
+
+  .consulta-achados,
+  .consulta-recomendacoes {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+
+  .ganho-ideal {
+    font-size: 10px;
+    padding: 8px 10px;
+  }
+}
+
+/* ========== IPHONE 12/13/14 PRO MAX (430px) ========== */
+@media (min-width: 429px) and (max-width: 450px) {
+  .bebe-card {
+    padding: 16px;
   }
 
   .bebe-ilustracao {
     width: 60px;
     height: 60px;
-    font-size: 36px;
-  }
-
-  .bebe-nome {
-    font-size: 20px;
+    font-size: 32px;
   }
 
   .saudacao {
@@ -756,66 +836,14 @@ label {
   }
 
   .dias-faltam {
-    font-size: 24px;
-  }
-
-  .card-secao {
-    padding: 16px;
-    margin: 0 12px 16px 12px;
-  }
-
-  .modal-content {
-    padding: 20px;
-    width: 95%;
-  }
-
-  .menu-item {
-    padding: 6px 12px;
-  }
-
-  .menu-icon {
-    font-size: 20px;
-  }
-
-  .menu-label {
-    font-size: 10px;
-  }
-
-  .grafico-container canvas {
-    max-height: 130px !important;
-    height: 130px !important;
-  }
-
-  .submenu-exames {
-    margin: 0 12px 16px 12px;
-  }
-
-  .submenu-conteudo {
-    padding: 0 12px;
+    font-size: 22px;
   }
 }
 
-/* ========== ANIMAÇÕES ADICIONAIS ========== */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.btn-registro:active {
-  transform: scale(0.98);
-}
-
-/* ========== SCROLLBAR PERSONALIZADA ========== */
+/* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -828,71 +856,24 @@ label {
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #6fcf97;
-}
-/* ========== IMAGEM DE FUNDO (SEGUNDA CAMADA) ========== */
-body {
-  position: relative;
-  background: #fdfbf9;
-}
-
-/* Camada de fundo com imagem */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1200"%3E%3Cpath fill="%23F5F0ED" fill-opacity="0.4" d="M400,200 C300,200 250,300 250,400 C250,500 300,600 400,600 C500,600 550,500 550,400 C550,300 500,200 400,200 Z"%3E%3C/path%3E%3Ccircle cx="400" cy="500" r="80" fill="%23E8F5E9" fill-opacity="0.3"/%3E%3Ccircle cx="600" cy="800" r="100" fill="%23FCE4EC" fill-opacity="0.3"/%3E%3Ccircle cx="200" cy="900" r="70" fill="%23E8F5E9" fill-opacity="0.3"/%3E%3C/svg%3E');
-  background-repeat: repeat;
-  background-size: 300px;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-  pointer-events: none;
-  z-index: 0;
+/* ========== ANIMAÇÕES DE TOQUE ========== */
+button,
+.menu-item,
+.submenu-btn,
+.sintoma-checkbox,
+.humor-option {
+  transition:
+    transform 0.1s ease,
+    background 0.2s ease;
 }
 
-/* Quando o app está visível, mostra o fundo */
-body.app-loaded::before {
-  opacity: 1;
+button:active,
+.menu-item:active,
+.submenu-btn:active {
+  transform: scale(0.96);
 }
 
-/* Overlay suave para melhor legibilidade */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(253, 251, 249, 0.85);
-  pointer-events: none;
-  z-index: 0;
-  transition: background 0.5s ease;
-}
-
-/* Container principal fica acima do fundo */
-#appContainer,
-.menu-inferior,
-.btn-sair-flutuante {
-  position: relative;
-  z-index: 10;
-}
-
-/* Animação de entrada suave */
-@keyframes fadeInBackground {
-  from {
-    opacity: 0;
-    transform: scale(1.02);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.container-visivel {
-  animation: fadeInBackground 0.8s ease-out;
+.sintoma-checkbox:active,
+.humor-option:active {
+  transform: scale(0.96);
 }
