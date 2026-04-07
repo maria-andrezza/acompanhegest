@@ -549,6 +549,23 @@
       display: block;
     }
 
+    /* Informações extras da gestação (meses) - sem alterar layout */
+    .info-meses {
+      text-align: center;
+      font-size: 13px;
+      color: #5D6F88;
+      margin-top: 8px;
+      padding: 4px 12px;
+      background: #F5F0ED;
+      border-radius: 20px;
+      display: inline-block;
+      width: auto;
+    }
+
+    .info-gestacao-wrapper {
+      margin: 16px 0;
+    }
+
     @media (max-width: 480px) {
       .sintomas-grid {
         grid-template-columns: 1fr;
@@ -608,12 +625,15 @@
     <div id="secao-inicio" class="secao active">
       <div class="header-moderno">
         <div class="saudacao">Olá, <span id="nomeUsuario">Mamãe</span>!<br>Como você e <span id="nomeBebeHeader">seu bebê</span> estão hoje?</div>
-        <div class="info-gestacao">
-          <span class="semanas-dias" id="semanasDias">-- semanas -- dias</span>
-          <div class="progresso-container">
-            <div class="progresso-barra" id="progressoBarra"></div>
+        <div class="info-gestacao-wrapper" id="infoGestacaoWrapper">
+          <div class="info-gestacao">
+            <span class="semanas-dias" id="semanasDias">-- semanas -- dias</span>
+            <div class="progresso-container">
+              <div class="progresso-barra" id="progressoBarra"></div>
+            </div>
+            <span class="dias-faltam" id="diasRestantes">---</span> <span>dias</span>
           </div>
-          <span class="dias-faltam" id="diasRestantes">---</span> <span>dias</span>
+          <div id="infoMesesContainer" class="info-meses" style="margin-top: 8px;"></div>
         </div>
       </div>
       <div class="bebe-card">
