@@ -4,796 +4,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#88E2B7">
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#f8a5c2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="AcompGest">
-  <title>AcompanheGest - Diário de Gestante</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <title>AcompanheGest</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Estilos adicionais */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: #FDFBF9;
-      color: #1A2B48;
-      padding-bottom: 85px;
-      min-height: 100vh;
-    }
-
-    .btn-sair-flutuante {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      padding: 8px 18px;
-      border-radius: 40px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      z-index: 1000;
-      font-size: 13px;
-      font-weight: 500;
-      color: #8D9BB0;
-      border: 1px solid #E8E2DC;
-    }
-
-    .btn-sair-flutuante:hover {
-      background: white;
-      color: #FF6B6B;
-    }
-
-    .menu-inferior {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(12px);
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 20px 22px;
-      border-top: 1px solid rgba(136, 226, 183, 0.2);
-      z-index: 100;
-    }
-
-    .menu-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px 16px;
-      border-radius: 40px;
-      color: #B8C4D0;
-    }
-
-    .menu-item.active {
-      color: #88E2B7;
-      background: #F0F9F4;
-    }
-
-    .menu-icon {
-      font-size: 22px;
-    }
-
-    .menu-label {
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .header-moderno {
-      padding: 20px 20px 0 20px;
-    }
-
-    .saudacao {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .info-gestacao {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 16px 0;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .semanas-dias {
-      background: #F5F0ED;
-      padding: 6px 14px;
-      border-radius: 40px;
-      font-size: 13px;
-    }
-
-    .progresso-container {
-      background: #F0EAE5;
-      border-radius: 20px;
-      height: 6px;
-      flex: 1;
-      margin: 0 16px;
-      overflow: hidden;
-    }
-
-    .progresso-barra {
-      background: #88E2B7;
-      height: 100%;
-      width: 0%;
-      transition: width 0.5s;
-    }
-
-    .dias-faltam {
-      font-size: 28px;
-      font-weight: bold;
-      color: #88E2B7;
-    }
-
-    .bebe-card {
-      background: linear-gradient(135deg, #E8F5E9 0%, #FCE4EC 100%);
-      border-radius: 32px;
-      padding: 24px;
-      margin: 16px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .bebe-ilustracao {
-      width: 80px;
-      height: 80px;
-      background: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-    }
-
-    .bebe-nome {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .bebe-tamanho {
-      color: #5D6F88;
-      font-size: 14px;
-    }
-
-    .bebe-sexo {
-      background: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      display: inline-block;
-    }
-
-    .desenvolvimento {
-      background: rgba(255, 255, 255, 0.8);
-      padding: 12px 16px;
-      border-radius: 24px;
-      margin-top: 12px;
-      font-size: 13px;
-    }
-
-    .alertas-container {
-      padding: 0 16px;
-      margin-bottom: 20px;
-    }
-
-    .alerta-card {
-      background: #FFF0E6;
-      padding: 14px 16px;
-      border-radius: 24px;
-      margin-bottom: 12px;
-      font-size: 13px;
-    }
-
-    .card-secao {
-      background: white;
-      border-radius: 28px;
-      padding: 20px;
-      margin: 0 16px 20px 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
-
-    .card-secao h3 {
-      font-size: 18px;
-      margin-bottom: 16px;
-      border-bottom: 2px solid #F0EAE5;
-      padding-bottom: 10px;
-    }
-
-    .btn-registro,
-    .btn-modal {
-      background: #88E2B7;
-      color: #1A2B48;
-      border: none;
-      padding: 14px 24px;
-      border-radius: 48px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.2s;
-    }
-
-    .btn-registro:hover,
-    .btn-modal:hover {
-      background: #6FCF97;
-      transform: translateY(-1px);
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #E8E2DC;
-      border-radius: 28px;
-      font-size: 14px;
-      background: #FEFCFA;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #88E2B7;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #5D6F88;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .sintomas-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .sintoma-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #FEFCFA;
-      padding: 10px 14px;
-      border-radius: 40px;
-      border: 1px solid #E8E2DC;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .sintoma-checkbox input {
-      width: 18px;
-      accent-color: #88E2B7;
-    }
-
-    .humor-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-    }
-
-    .humor-option {
-      background: #FEFCFA;
-      padding: 8px;
-      border-radius: 40px;
-      border: 1px solid #E8E2DC;
-      cursor: pointer;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    .humor-option:has(input:checked) {
-      background: #88E2B7;
-    }
-
-    .humor-option input {
-      display: none;
-    }
-
-    .grafico-container {
-      background: white;
-      border-radius: 24px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .grafico-container canvas {
-      max-height: 180px !important;
-      height: 180px !important;
-      width: 100% !important;
-    }
-
-    .ganho-ideal {
-      background: #F0F9F4;
-      padding: 12px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      color: #88E2B7;
-      margin-top: 12px;
-      border-left: 3px solid #88E2B7;
-    }
-
-    .historico-item {
-      background: #FEFCFA;
-      padding: 14px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-      border-left: 3px solid #88E2B7;
-    }
-
-    .historico-data {
-      font-size: 12px;
-      color: #88E2B7;
-      font-weight: 600;
-    }
-
-    .historico-peso {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 6px 0;
-    }
-
-    .historico-sintomas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 8px 0;
-    }
-
-    .sintoma-badge {
-      background: #F0F9F4;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      color: #88E2B7;
-    }
-
-    .submenu-exames {
-      display: flex;
-      gap: 12px;
-      margin: 0 16px 20px 16px;
-      background: white;
-      border-radius: 48px;
-      padding: 4px;
-      border: 1px solid #E8E2DC;
-    }
-
-    .submenu-btn {
-      flex: 1;
-      background: transparent;
-      border: none;
-      padding: 10px;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #B8C4D0;
-      font-size: 14px;
-    }
-
-    .submenu-btn.active {
-      background: #88E2B7;
-      color: white;
-    }
-
-    .submenu-conteudo {
-      display: none;
-      padding: 0 16px;
-    }
-
-    .submenu-conteudo.active {
-      display: block;
-    }
-
-    .exame-item,
-    .consulta-item {
-      background: #FEFCFA;
-      padding: 14px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-      border-left: 3px solid #88E2B7;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .exame-info {
-      flex: 1;
-    }
-
-    .exame-data {
-      font-size: 12px;
-      color: #88E2B7;
-    }
-
-    .exame-nome {
-      font-weight: 600;
-      font-size: 15px;
-      margin: 4px 0;
-    }
-
-    .exame-valor {
-      font-size: 18px;
-      font-weight: bold;
-      color: #88E2B7;
-    }
-
-    .exame-emoji {
-      font-size: 32px;
-      margin-left: 12px;
-    }
-
-    .consulta-achados {
-      background: #F5F0ED;
-      padding: 8px 12px;
-      border-radius: 16px;
-      margin: 8px 0;
-      font-size: 13px;
-    }
-
-    .consulta-recomendacoes {
-      background: #FFF0E6;
-      padding: 8px 12px;
-      border-radius: 16px;
-      font-size: 13px;
-      border-left: 3px solid #FFB347;
-    }
-
-    .filtro-exames {
-      margin-bottom: 16px;
-    }
-
-    .filtro-exames select {
-      background: #FEFCFA;
-      cursor: pointer;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(26, 43, 72, 0.5);
-      backdrop-filter: blur(4px);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 28px;
-      border-radius: 32px;
-      max-width: 90%;
-      width: 420px;
-      max-height: 80vh;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .close-modal {
-      position: absolute;
-      top: 16px;
-      right: 20px;
-      font-size: 28px;
-      cursor: pointer;
-      color: #B8C4D0;
-    }
-
-    .close-modal:hover {
-      color: #FF6B6B;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: #B8C4D0;
-      background: #FEFCFA;
-      border-radius: 24px;
-    }
-
-    .footer-app {
-      text-align: center;
-      padding: 20px;
-      font-size: 11px;
-      color: #B8C4D0;
-    }
-
-    .secao {
-      display: none;
-    }
-
-    .secao.active {
-      display: block;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 60px;
-      color: #88E2B7;
-    }
-
-    .container-oculto {
-      display: none;
-    }
-
-    .container-visivel {
-      display: block;
-    }
-
-    /* Informações extras da gestação (meses) - sem alterar layout */
-    .info-meses {
-      text-align: center;
-      font-size: 13px;
-      color: #5D6F88;
-      margin-top: 8px;
-      padding: 4px 12px;
-      background: #F5F0ED;
-      border-radius: 20px;
-      display: inline-block;
-      width: auto;
-    }
-
-    .info-gestacao-wrapper {
-      margin: 16px 0;
-    }
-
-    @media (max-width: 480px) {
-      .sintomas-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .humor-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-
-      .bebe-card {
-        margin: 12px;
-        padding: 16px;
-      }
-
-      .bebe-ilustracao {
-        width: 60px;
-        height: 60px;
-        font-size: 36px;
-      }
-
-      .exame-item {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .exame-emoji {
-        margin-left: 0;
-        margin-top: 8px;
-      }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <div class="btn-sair-flutuante" onclick="logout()">
-    <span>🚪</span>
-    <span>Sair</span>
-  </div>
-
-  <div id="loading" class="loading">🌸 Carregando AcompanheGest... 🌸</div>
+  <div id="loading" class="loading">🌸 Preparando o Diário da Íris...</div>
 
   <div id="appContainer" class="container-oculto">
+    <header class="header-moderno" id="mainHeader">
+      <div class="saudacao">Olá, <span id="nomeUsuario">Andrezza</span>!</div>
+      <div class="info-gestacao">
+        <span class="semanas-dias" id="semanasDias">-- semanas e -- dias</span>
+        <div class="mes-badge">🌙 <span id="mesGestacao">--º mês</span></div>
+        <div class="progresso-container">
+          <div class="progresso-barra" id="progressoBarra"></div>
+        </div>
+        <div class="faltam-dias"><span id="diasRestantes">---</span> dias para o nascimento 💖</div>
+      </div>
+    </header>
 
-    <!-- Menu Inferior -->
-    <div class="menu-inferior">
-      <button class="menu-item active" data-secao="inicio"><span class="menu-icon">🏠</span><span class="menu-label">Início</span></button>
-      <button class="menu-item" data-secao="saude"><span class="menu-icon">💚</span><span class="menu-label">Minha Saúde</span></button>
-      <button class="menu-item" data-secao="exames"><span class="menu-icon">📋</span><span class="menu-label">Exames & Consultas</span></button>
-      <button class="menu-item" data-secao="perfil"><span class="menu-icon">👤</span><span class="menu-label">Meu Perfil</span></button>
+    <div class="bebe-card" id="bebeCard">
+      <div class="bebe-ilustracao"><span>👶</span></div>
+      <div class="bebe-info">
+        <div class="bebe-nome" id="bebeNome">Íris</div>
+        <div class="bebe-status">Sua pequena grande vida</div>
+      </div>
     </div>
 
-    <!-- ==================== INÍCIO ==================== -->
-    <div id="secao-inicio" class="secao active">
-      <div class="header-moderno">
-        <div class="saudacao">Olá, <span id="nomeUsuario">Mamãe</span>!<br>Como você e <span id="nomeBebeHeader">seu bebê</span> estão hoje?</div>
-        <div class="info-gestacao-wrapper" id="infoGestacaoWrapper">
-          <div class="info-gestacao">
-            <span class="semanas-dias" id="semanasDias">-- semanas -- dias</span>
-            <div class="progresso-container">
-              <div class="progresso-barra" id="progressoBarra"></div>
-            </div>
-            <span class="dias-faltam" id="diasRestantes">---</span> <span>dias</span>
+    <main>
+      <section id="secao-inicio" class="secao active">
+        <div class="card-secao ia-highlight">
+          <h3>✨ Desenvolvimento da Íris</h3>
+          <div id="resumoIA" class="resumo-ia-box">Calculando insights...</div>
+        </div>
+        <div class="card-secao">
+          <h4>📌 Dica do Dia</h4>
+          <p style="font-size: 13px; color: #666; margin-top: 8px;">O ácido fólico e a hidratação são os melhores amigos do desenvolvimento nervoso nesta fase.</p>
+        </div>
+      </section>
+
+      <section id="secao-timeline" class="secao">
+        <div class="card-secao">
+          <h3>📅 Linha do Tempo</h3>
+          <div class="grid-datas">
+            <div><label>Início</label><input type="date" id="filtroInicio"></div>
+            <div><label>Fim</label><input type="date" id="filtroFim"></div>
           </div>
-          <div id="infoMesesContainer" class="info-meses" style="margin-top: 8px;"></div>
+          <button class="btn-registro" onclick="renderizarFiltroGeral()">🔍 Filtrar Histórico</button>
+          <div id="listaFiltradaGeral" class="timeline-lista"></div>
         </div>
-      </div>
-      <div class="bebe-card">
-        <div class="bebe-ilustracao" id="bebeIcone">👶</div>
-        <div class="bebe-info">
-          <div class="bebe-nome" id="bebeNome">---</div>
-          <div class="bebe-tamanho" id="bebeTamanho">Carregando...</div>
-          <div class="bebe-sexo" id="bebeSexo">---</div>
-          <div class="desenvolvimento" id="desenvolvimento">Carregando...</div>
-        </div>
-      </div>
-      <div class="alertas-container" id="alertasContainer"></div>
-      <div class="card-secao">
-        <h3>📊 Resumo da Semana</h3>
-        <div id="resumoSemana"></div>
-      </div>
-    </div>
+      </section>
 
-    <!-- ==================== MINHA SAÚDE ==================== -->
-    <div id="secao-saude" class="secao">
-      <div class="card-secao">
-        <h3>⚖️ Evolução do Peso</h3>
-        <div class="grafico-container"><canvas id="pesoChart" height="180"></canvas></div>
-        <div id="ganhoIdeal" class="ganho-ideal"></div>
-        <button class="btn-registro" onclick="abrirModal('peso')">➕ Novo Registro Diário</button>
-      </div>
-      <div class="card-secao">
-        <h3>📋 Histórico</h3>
-        <div id="historicoRegistros"></div>
-      </div>
-    </div>
-
-    <!-- ==================== EXAMES & CONSULTAS ==================== -->
-    <div id="secao-exames" class="secao">
-      <div class="submenu-exames">
-        <button class="submenu-btn active" data-sub="exames">🔬 Exames</button>
-        <button class="submenu-btn" data-sub="consultas">👩‍⚕️ Consultas</button>
-      </div>
-
-      <div id="sub-exames" class="submenu-conteudo active">
+      <section id="secao-medico" class="secao">
         <div class="card-secao">
-          <h3>📊 Comparar Parâmetro</h3>
-          <div class="filtro-exames">
-            <select id="parametroSelect" onchange="carregarGraficoParametro()">
-              <option value="hemoglobina">Hemoglobina (g/dL)</option>
-              <option value="ferritina">Ferritina (ng/mL)</option>
-              <option value="glicose">Glicose jejum (mg/dL)</option>
-            </select>
-          </div>
-          <div class="grafico-container"><canvas id="hemoglobinaChart" height="180"></canvas></div>
-          <div id="detalhesParametro" class="detalhes-parametro"></div>
-        </div>
-
-        <div class="card-secao">
-          <h3>🔬 Meus Exames</h3>
-          <div id="listaExamesCompleta"></div>
-          <button class="btn-registro" onclick="abrirModal('exame')">➕ Novo Resultado</button>
-        </div>
-      </div>
-
-      <div id="sub-consultas" class="submenu-conteudo">
-        <div class="card-secao">
-          <h3>📋 Histórico de Consultas</h3>
-          <div id="listaConsultasCompleta"></div>
-          <button class="btn-registro" onclick="abrirModal('consulta')">➕ Nova Consulta</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== MEU PERFIL ==================== -->
-    <div id="secao-perfil" class="secao">
-      <div class="card-secao">
-        <h3>👤 Dados Pessoais</h3>
-        <div class="grid-2">
-          <div><label>Nome</label><input type="text" id="nome" placeholder="Seu nome"></div>
-          <div><label>Cidade</label><input type="text" id="cidade" placeholder="Sua cidade"></div>
-          <div><label>Altura (cm)</label><input type="number" id="altura" placeholder="Ex: 165"></div>
-          <div><label>Peso pré (kg)</label><input type="number" id="pesoPre" placeholder="Peso antes da gestação"></div>
-          <div><label>Peso atual (kg)</label><input type="number" id="pesoAtual" placeholder="Peso atual"></div>
-        </div>
-        <h3 style="margin-top: 20px;">🤰 Dados da Gestação</h3>
-        <div class="grid-2">
-          <div><label>Data Prevista do Parto (DPP)</label><input type="date" id="dpp"></div>
-          <div><label>Nome do Bebê (opcional)</label><input type="text" id="nomeBebe" placeholder="Nome do bebê"></div>
-          <div><label>Sexo do Bebê</label>
-            <select id="sexoBebe">
-              <option value="Menina">👧 Menina</option>
-              <option value="Menino">👦 Menino</option>
-              <option value="Não sei">❓ Ainda não sei</option>
-            </select>
+          <h3>👩‍⚕️ Consultas e Exames</h3>
+          <div class="grid-buttons">
+            <button class="btn-registro btn-roxo" onclick="abrirModal('consulta')">+ Consulta</button>
+            <button class="btn-registro btn-verde" onclick="abrirModal('exame')">+ Exame</button>
           </div>
         </div>
-        <button class="btn-registro" onclick="salvarConfig()" style="margin-top: 20px;">💾 Salvar Perfil</button>
-      </div>
-    </div>
+      </section>
 
-    <div class="footer-app">
-      <p>💖 AcompanheGest - Cada gestação é única 💖</p>
-    </div>
+      <section id="secao-saude" class="secao">
+        <div class="card-secao">
+          <h3>🌸 Meu Bem-estar</h3>
+          <button class="btn-registro btn-rosa" onclick="abrirModal('diario')">+ Registro Diário</button>
+          <p class="legenda-input">(Peso, Pressão, Humor e Sintomas)</p>
+        </div>
+      </section>
+
+      <section id="secao-perfil" class="secao">
+        <div class="card-secao">
+          <h3>👤 Meu Perfil</h3>
+          <label>Seu Nome</label><input type="text" id="nome">
+          <label>Nome do Bebê</label><input type="text" id="nomeBebe">
+          <div class="grid-datas">
+            <div><label>Semanas</label><input type="number" id="inputSemanas"></div>
+            <div><label>Dias</label><input type="number" id="inputDias"></div>
+          </div>
+          <button class="btn-registro" onclick="salvarConfig()">💾 Salvar Dados</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="menu-inferior">
+      <button class="menu-item active" data-secao="inicio">🏠<span>Início</span></button>
+      <button class="menu-item" data-secao="timeline">📅<span>Timeline</span></button>
+      <button class="menu-item" data-secao="medico">👩‍⚕️<span>Médico</span></button>
+      <button class="menu-item" data-secao="saude">🌸<span>Saúde</span></button>
+      <button class="menu-item" data-secao="perfil">👤<span>Perfil</span></button>
+    </nav>
   </div>
 
-  <!-- ==================== MODAL REGISTRO DIÁRIO ==================== -->
-  <div id="modalRegistro" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="fecharModal('modalRegistro')">&times;</span>
+  <div id="modalDiario" class="modal">
+    <div class="modal-conteudo">
       <h3>📝 Registro Diário</h3>
-      <div class="form-group"><label>⚖️ Peso (kg)</label><input type="number" id="modalPeso" step="0.1" placeholder="Ex: 68.5"></div>
-      <div class="form-group"><label>❤️ Pressão Arterial</label>
-        <div style="display: flex; gap: 12px;"><input type="number" id="modalPressaoSistolica" placeholder="Sistólica"><span>/</span><input type="number" id="modalPressaoDiastolica" placeholder="Diastólica"></div>
+      <label>Data</label><input type="date" id="d_data">
+      <div class="grid-datas">
+        <div><label>Peso (kg)</label><input type="number" id="d_peso" step="0.1"></div>
+        <div><label>Pressão</label><input type="text" id="d_pressao" placeholder="12/8"></div>
       </div>
-      <div class="form-group"><label>🤕 Sintomas</label>
-        <div class="sintomas-grid"><label class="sintoma-checkbox"><input type="checkbox" value="Náusea"> 🤢 Náusea</label><label class="sintoma-checkbox"><input type="checkbox" value="Dor pélvica"> 🦴 Dor pélvica</label><label class="sintoma-checkbox"><input type="checkbox" value="Inchaço"> 💧 Inchaço</label><label class="sintoma-checkbox"><input type="checkbox" value="Dor de cabeça"> 🤕 Dor cabeça</label><label class="sintoma-checkbox"><input type="checkbox" value="Fadiga"> 😴 Fadiga</label><label class="sintoma-checkbox"><input type="checkbox" value="Insônia"> 🌙 Insônia</label><label class="sintoma-checkbox"><input type="checkbox" value="Azia"> 🔥 Azia</label><label class="sintoma-checkbox"><input type="checkbox" value="Cãibras"> 🦵 Cãibras</label></div>
-      </div>
-      <div class="form-group"><label>😊 Humor</label>
-        <div class="humor-grid"><label class="humor-option"><input type="radio" name="modalHumor" value="😊"> 😊</label><label class="humor-option"><input type="radio" name="modalHumor" value="😐"> 😐</label><label class="humor-option"><input type="radio" name="modalHumor" value="😴"> 😴</label><label class="humor-option"><input type="radio" name="modalHumor" value="🤢"> 🤢</label><label class="humor-option"><input type="radio" name="modalHumor" value="😢"> 😢</label><label class="humor-option"><input type="radio" name="modalHumor" value="😤"> 😤</label></div>
-      </div>
-      <div class="form-group"><label>👶 Movimentos fetais</label><input type="number" id="modalMovimentos" placeholder="Quantidade em 1 hora"></div>
-      <div class="form-group"><label>💭 Como está se sentindo?</label><textarea id="modalObservacoes" rows="2" placeholder="Compartilhe seu dia..."></textarea></div>
-      <button class="btn-modal" onclick="salvarRegistroModal()">💾 Salvar</button>
+      <label>Sintomas / Humor</label><input type="text" id="d_sintomas" placeholder="Como se sente?">
+      <button class="btn-registro" onclick="salvarDiario()">Gravar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalDiario')">Cancelar</button>
     </div>
   </div>
 
-  <!-- ==================== MODAL NOVO EXAME ==================== -->
-  <div id="modalExame" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="fecharModal('modalExame')">&times;</span>
-      <h3>➕ Novo Resultado de Exame</h3>
-      <div class="form-group"><label>Tipo de Exame</label><input type="text" id="novoTipoExame" placeholder="Ex: Hemograma"></div>
-      <div class="form-group"><label>Parâmetro</label><input type="text" id="novoParametroExame" placeholder="Ex: Hemoglobina"></div>
-      <div class="grid-2">
-        <div class="form-group"><label>Valor</label><input type="number" id="novoValorExame" step="0.1" placeholder="Ex: 12.5"></div>
-        <div class="form-group"><label>Unidade</label><input type="text" id="novaUnidadeExame" placeholder="Ex: g/dL"></div>
-      </div>
-      <div class="form-group"><label>Data</label><input type="date" id="novaDataExame"></div>
-      <button class="btn-modal" onclick="adicionarExameCompleto()">💾 Salvar</button>
-    </div>
-  </div>
-
-  <!-- ==================== MODAL NOVA CONSULTA ==================== -->
   <div id="modalConsulta" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="fecharModal('modalConsulta')">&times;</span>
-      <h3>➕ Nova Consulta</h3>
-      <div class="form-group"><label>Especialidade</label>
-        <select id="novaEspecialidadeSelect">
-          <option value="">Selecione...</option>
-          <option value="Obstetra">🤰 Obstetra</option>
-          <option value="Pediatra">👶 Pediatra</option>
-          <option value="Fisioterapeuta Pélvica">🧘 Fisioterapeuta Pélvica</option>
-          <option value="Nutricionista">🥗 Nutricionista</option>
-          <option value="Endocrinologista">🩺 Endocrinologista</option>
-          <option value="Cardiologista">❤️ Cardiologista</option>
-          <option value="Outro">📝 Outro</option>
-        </select>
-        <input type="text" id="novaEspecialidadeOutro" placeholder="Digite a especialidade" style="display: none; margin-top: 8px;">
-      </div>
-      <div class="form-group"><label>Data</label><input type="date" id="novaDataConsulta"></div>
-      <div class="form-group"><label>Achados</label><textarea id="novaAchadosConsulta" rows="3" placeholder="Ex: Tensão no assoalho pélvico..."></textarea></div>
-      <div class="form-group"><label>Recomendações</label><textarea id="novaRecomendacoesConsulta" rows="3" placeholder="Ex: Exercício de Kegel 3x ao dia..."></textarea></div>
-      <button class="btn-modal" onclick="adicionarConsultaCompleta()">💾 Salvar</button>
+    <div class="modal-conteudo">
+      <h3>👩‍⚕️ Nova Consulta</h3>
+      <label>Especialidade</label><input type="text" id="c_especialidade">
+      <label>Data</label><input type="date" id="c_data">
+      <label>Anotações</label><textarea id="c_achados" rows="3"></textarea>
+      <button class="btn-registro" onclick="salvarConsulta()">Salvar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalConsulta')">Voltar</button>
+    </div>
+  </div>
+
+  <div id="modalExame" class="modal">
+    <div class="modal-conteudo">
+      <h3>🔬 Novo Exame</h3>
+      <label>Tipo de Exame</label><input type="text" id="e_tipo">
+      <label>Resultado / Valor</label><input type="text" id="e_valor">
+      <label>Data</label><input type="date" id="e_data">
+      <button class="btn-registro" onclick="salvarExame()">Salvar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalExame')">Voltar</button>
     </div>
   </div>
 

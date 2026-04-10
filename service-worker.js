@@ -1,7 +1,8 @@
 // AcompanheGest - Service Worker
 // Permite que o app funcione offline e tenha experiência nativa
 
-const CACHE_NAME = "acompanhegest-v2.0.0";
+// AcompanheGest - Service Worker Corrigido
+const CACHE_NAME = "acompanhegest-v2.1.1"; // Versão incrementada para forçar atualização
 const urlsToCache = [
   "/",
   "/login.html",
@@ -11,6 +12,7 @@ const urlsToCache = [
   "/script.js",
   "/manifest.json",
   "/offline.html",
+  "/icons/favicon.ico",
   "/icons/icon-72.png",
   "/icons/icon-96.png",
   "/icons/icon-128.png",
@@ -18,7 +20,7 @@ const urlsToCache = [
   "/icons/icon-152.png",
   "/icons/icon-192.png",
   "/icons/icon-384.png",
-  "/icons/icon-512.png",
+  "/icons/icon-512.png", // MUDADO PARA .PNG para coincidir com sua pasta
 ];
 
 // Instalação do Service Worker
@@ -98,7 +100,7 @@ self.addEventListener("fetch", (event) => {
           return caches.match("/offline.html");
         }
 
-        // Para imagens, retorna um placeholder
+        // Para imagens, retorna um placeholder genérico
         if (event.request.destination === "image") {
           return new Response(
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f8a5c2"/><text x="50" y="67" font-size="50" text-anchor="middle" fill="white">🌸</text></svg>',

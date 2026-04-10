@@ -1,330 +1,59 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AcompGest">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#f8a5c2">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="AcompGest">
+<script>
+  // IMPORTANTE: Como você vai usar o Neon, as funções agora precisam ser assíncronas (async)
+  // para esperar a resposta do servidor/banco de dados.
 
-  <title>AcompanheGest - Login</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  async function fazerLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('errorMsg');
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    if (!username || !password) {
+      errorDiv.textContent = '❌ Por favor, preencha todos os campos.';
+      errorDiv.style.display = 'block';
+      return;
     }
 
-    body {
-      background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
+    // Aqui você chamará sua API que conecta ao Neon
+    // Por enquanto, mantemos a lógica local até você subir o backend
+    if (login(username, password)) {
+      window.location.href = 'index.html';
+    } else {
+      errorDiv.textContent = '❌ Usuário ou senha não encontrados.';
+      errorDiv.style.display = 'block';
+    }
+  }
+
+  async function criarConta() {
+    const username = document.getElementById('newUsername').value;
+    const password = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const errorDiv = document.getElementById('errorMsg');
+
+    if (!username || !password) {
+      errorDiv.textContent = '❌ Preencha todos os campos!';
+      errorDiv.style.display = 'block';
+      return;
     }
 
-    .login-container {
-      background: white;
-      border-radius: 48px;
-      padding: 40px 32px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      animation: fadeIn 0.5s ease;
+    if (password !== confirm) {
+      errorDiv.textContent = '❌ As senhas não conferem!';
+      errorDiv.style.display = 'block';
+      return;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    // No Neon, você faria um: await fetch('/api/register', { ... })
+    if (registrarUsuario(username, password)) {
+      alert('✅ Conta criada com sucesso! 💖');
+      voltarLogin();
+      document.getElementById('username').value = username;
+    } else {
+      errorDiv.textContent = '❌ Este usuário já existe ou erro no banco.';
+      errorDiv.style.display = 'block';
     }
-
-    .logo {
-      margin-bottom: 24px;
-    }
-
-    .logo-icon {
-      font-size: 64px;
-      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .logo-icon span {
-      font-size: 48px;
-    }
-
-    .login-container h1 {
-      font-size: 28px;
-      background: linear-gradient(135deg, #f8a5c2, #c7b9ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 8px;
-    }
-
-    .tagline {
-      color: #888;
-      margin-bottom: 32px;
-      font-size: 14px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #b87c9a;
-      font-weight: 500;
-      font-size: 13px;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 14px 18px;
-      border: 2px solid #f0e0e8;
-      border-radius: 30px;
-      font-size: 16px;
-      transition: all 0.3s;
-      background: #fefafc;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #f8a5c2;
-      background: white;
-    }
-
-    .btn-login {
-      width: 100%;
-      background: linear-gradient(135deg, #f8a5c2 0%, #c7b9ff 100%);
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 40px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 8px;
-    }
-
-    .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(248, 165, 194, 0.4);
-    }
-
-    .btn-cadastro {
-      width: 100%;
-      background: transparent;
-      border: 2px solid #f8a5c2;
-      color: #f8a5c2;
-      padding: 12px;
-      border-radius: 40px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: all 0.3s;
-    }
-
-    .btn-cadastro:hover {
-      background: #f8a5c2;
-      color: white;
-    }
-
-    .error-msg {
-      background: #ffe5e5;
-      color: #e74c3c;
-      padding: 12px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      display: none;
-      font-size: 13px;
-    }
-
-    .info {
-      text-align: center;
-      margin-top: 28px;
-      font-size: 11px;
-      color: #aaa;
-      border-top: 1px solid #f0e0e8;
-      padding-top: 20px;
-    }
-
-    .offline-badge {
-      background: #f0e0e8;
-      padding: 6px 12px;
-      border-radius: 30px;
-      font-size: 11px;
-      display: inline-block;
-      margin-bottom: 16px;
-    }
-
-    .heart {
-      color: #f8a5c2;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="login-container">
-    <div class="logo">
-      <div class="logo-icon">
-        <span>🌸</span>
-      </div>
-      <h1>AcompanheGest</h1>
-      <div class="tagline">🌸 Acompanhamento inteligente da sua gestação 🌸</div>
-      <div id="offlineBadge" class="offline-badge" style="display: none;">📡 Modo Offline - Dados locais disponíveis</div>
-    </div>
-
-    <div id="errorMsg" class="error-msg"></div>
-
-    <div id="loginForm">
-      <div class="form-group">
-        <label>👤 Seu nome de usuário</label>
-        <input type="text" id="username" placeholder="Ex: mariagestante" autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label>🔒 Sua senha</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-      </div>
-      <button class="btn-login" onclick="fazerLogin()">✨ Entrar ✨</button>
-      <button class="btn-cadastro" onclick="mostrarCadastro()">📝 Criar minha conta</button>
-    </div>
-
-    <div id="cadastroForm" style="display: none;">
-      <div class="form-group">
-        <label>👤 Nome de usuário</label>
-        <input type="text" id="newUsername" placeholder="Escolha um nome">
-      </div>
-      <div class="form-group">
-        <label>🔒 Senha</label>
-        <input type="password" id="newPassword" placeholder="Crie uma senha">
-      </div>
-      <div class="form-group">
-        <label>✅ Confirmar senha</label>
-        <input type="password" id="confirmPassword" placeholder="Confirme sua senha">
-      </div>
-      <button class="btn-login" onclick="criarConta()">💖 Criar conta</button>
-      <button class="btn-cadastro" onclick="voltarLogin()">← Voltar</button>
-    </div>
-
-    <div class="info">
-      <span class="heart">💖</span> Seus dados são salvos apenas no seu celular<br>
-      Funciona offline! <span class="heart">📱</span><br>
-      <span class="heart">🌸 AcompanheGest - Cada gestação é única 🌸</span>
-    </div>
-  </div>
-
-  <script src="auth.js"></script>
-  <script>
-    // Verificar status de conexão
-    function atualizarStatusConexao() {
-      const badge = document.getElementById('offlineBadge');
-      if (badge) {
-        badge.style.display = navigator.onLine ? 'none' : 'inline-block';
-      }
-    }
-
-    window.addEventListener('online', atualizarStatusConexao);
-    window.addEventListener('offline', atualizarStatusConexao);
-    atualizarStatusConexao();
-
-    function mostrarCadastro() {
-      document.getElementById('loginForm').style.display = 'none';
-      document.getElementById('cadastroForm').style.display = 'block';
-      document.getElementById('errorMsg').style.display = 'none';
-    }
-
-    function voltarLogin() {
-      document.getElementById('cadastroForm').style.display = 'none';
-      document.getElementById('loginForm').style.display = 'block';
-      document.getElementById('errorMsg').style.display = 'none';
-    }
-
-    function fazerLogin() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      if (login(username, password)) {
-        window.location.href = 'index.html?user=' + encodeURIComponent(username);
-      } else {
-        const errorDiv = document.getElementById('errorMsg');
-        errorDiv.textContent = '❌ Usuário ou senha não encontrados.';
-        errorDiv.style.display = 'block';
-      }
-    }
-
-    function criarConta() {
-      const username = document.getElementById('newUsername').value;
-      const password = document.getElementById('newPassword').value;
-      const confirm = document.getElementById('confirmPassword').value;
-
-      if (!username || !password) {
-        document.getElementById('errorMsg').textContent = '❌ Preencha todos os campos!';
-        document.getElementById('errorMsg').style.display = 'block';
-        return;
-      }
-
-      if (password !== confirm) {
-        document.getElementById('errorMsg').textContent = '❌ As senhas não conferem!';
-        document.getElementById('errorMsg').style.display = 'block';
-        return;
-      }
-
-      if (password.length < 4) {
-        document.getElementById('errorMsg').textContent = '❌ A senha deve ter pelo menos 4 caracteres.';
-        document.getElementById('errorMsg').style.display = 'block';
-        return;
-      }
-
-      if (registrarUsuario(username, password)) {
-        alert('✅ Conta criada com sucesso! Faça login para começar. 💖');
-        voltarLogin();
-        document.getElementById('username').value = username;
-        document.getElementById('password').value = '';
-      } else {
-        document.getElementById('errorMsg').textContent = '❌ Este nome de usuário já existe!';
-        document.getElementById('errorMsg').style.display = 'block';
-      }
-    }
-
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => console.log('Service Worker registrado'))
-          .catch(error => console.log('Erro:', error));
-      });
-    }
-  </script>
-</body>
-
-</html>
+  }
+</script>
