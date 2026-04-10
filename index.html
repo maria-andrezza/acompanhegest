@@ -5,9 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#f8a5c2">
+
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AcompGest">
+
   <title>AcompanheGest</title>
+
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -16,6 +21,7 @@
   <div id="loading" class="loading">🌸 Preparando o Diário da Íris...</div>
 
   <div id="appContainer" class="container-oculto">
+
     <header class="header-moderno" id="mainHeader">
       <div class="saudacao">Olá, <span id="nomeUsuario">Andrezza</span>!</div>
       <div class="info-gestacao">
@@ -44,28 +50,29 @@
         </div>
         <div class="card-secao">
           <h4>📌 Dica do Dia</h4>
-          <p style="font-size: 13px; color: #666; margin-top: 8px;">O ácido fólico e a hidratação são os melhores amigos do desenvolvimento nervoso nesta fase.</p>
+          <p style="font-size: 13px; color: #666; margin-top: 8px;">O ácido fólico e a hidratação são fundamentais para o desenvolvimento dela hoje.</p>
         </div>
       </section>
 
       <section id="secao-timeline" class="secao">
         <div class="card-secao">
           <h3>📅 Linha do Tempo</h3>
-          <div class="grid-datas">
-            <div><label>Início</label><input type="date" id="filtroInicio"></div>
-            <div><label>Fim</label><input type="date" id="filtroFim"></div>
+          <div class="grid-datas" style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <div style="flex: 1;"><label>De:</label><input type="date" id="filtroInicio"></div>
+            <div style="flex: 1;"><label>Até:</label><input type="date" id="filtroFim"></div>
           </div>
           <button class="btn-registro" onclick="renderizarFiltroGeral()">🔍 Filtrar Histórico</button>
-          <div id="listaFiltradaGeral" class="timeline-lista"></div>
+          <div id="listaFiltradaGeral" class="timeline-lista" style="margin-top: 20px;"></div>
         </div>
       </section>
 
       <section id="secao-medico" class="secao">
         <div class="card-secao">
           <h3>👩‍⚕️ Consultas e Exames</h3>
-          <div class="grid-buttons">
-            <button class="btn-registro btn-roxo" onclick="abrirModal('consulta')">+ Consulta</button>
-            <button class="btn-registro btn-verde" onclick="abrirModal('exame')">+ Exame</button>
+          <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Mantenha seu histórico clínico atualizado.</p>
+          <div class="grid-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button class="btn-registro btn-roxo" onclick="abrirModal('consulta')" style="background-color: #BA68C8; color: white;">+ Consulta</button>
+            <button class="btn-registro btn-verde" onclick="abrirModal('exame')" style="background-color: #81C784; color: white;">+ Exame</button>
           </div>
         </div>
       </section>
@@ -73,8 +80,8 @@
       <section id="secao-saude" class="secao">
         <div class="card-secao">
           <h3>🌸 Meu Bem-estar</h3>
-          <button class="btn-registro btn-rosa" onclick="abrirModal('diario')">+ Registro Diário</button>
-          <p class="legenda-input">(Peso, Pressão, Humor e Sintomas)</p>
+          <button class="btn-registro btn-rosa" onclick="abrirModal('diario')" style="background-color: #F06292; color: white;">+ Registro Diário</button>
+          <p style="font-size: 11px; color: #999; text-align: center; margin-top: 10px;">(Peso, Pressão, Humor e Sintomas)</p>
         </div>
       </section>
 
@@ -83,11 +90,11 @@
           <h3>👤 Meu Perfil</h3>
           <label>Seu Nome</label><input type="text" id="nome">
           <label>Nome do Bebê</label><input type="text" id="nomeBebe">
-          <div class="grid-datas">
-            <div><label>Semanas</label><input type="number" id="inputSemanas"></div>
-            <div><label>Dias</label><input type="number" id="inputDias"></div>
+          <div class="grid-datas" style="display: flex; gap: 10px; margin-top: 15px;">
+            <div style="flex: 1;"><label>Semanas</label><input type="number" id="inputSemanas"></div>
+            <div style="flex: 1;"><label>Dias</label><input type="number" id="inputDias"></div>
           </div>
-          <button class="btn-registro" onclick="salvarConfig()">💾 Salvar Dados</button>
+          <button class="btn-registro" onclick="salvarConfig()" style="margin-top: 20px;">💾 Salvar Dados</button>
         </div>
       </section>
     </main>
@@ -105,13 +112,13 @@
     <div class="modal-conteudo">
       <h3>📝 Registro Diário</h3>
       <label>Data</label><input type="date" id="d_data">
-      <div class="grid-datas">
-        <div><label>Peso (kg)</label><input type="number" id="d_peso" step="0.1"></div>
-        <div><label>Pressão</label><input type="text" id="d_pressao" placeholder="12/8"></div>
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1;"><label>Peso (kg)</label><input type="number" id="d_peso" step="0.1"></div>
+        <div style="flex: 1;"><label>Pressão</label><input type="text" id="d_pressao" placeholder="12/8"></div>
       </div>
-      <label>Sintomas / Humor</label><input type="text" id="d_sintomas" placeholder="Como se sente?">
+      <label>Sintomas / Humor</label><input type="text" id="d_sintomas" placeholder="Ex: Azia, sono, feliz...">
       <button class="btn-registro" onclick="salvarDiario()">Gravar</button>
-      <button class="btn-cancelar" onclick="fecharModal('modalDiario')">Cancelar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalDiario')" style="background: none; border: none; color: red; width: 100%; margin-top: 10px;">Cancelar</button>
     </div>
   </div>
 
@@ -120,9 +127,9 @@
       <h3>👩‍⚕️ Nova Consulta</h3>
       <label>Especialidade</label><input type="text" id="c_especialidade">
       <label>Data</label><input type="date" id="c_data">
-      <label>Anotações</label><textarea id="c_achados" rows="3"></textarea>
+      <label>Anotações</label><textarea id="c_achados" rows="3" style="width: 100%; border-radius: 12px; padding: 10px;"></textarea>
       <button class="btn-registro" onclick="salvarConsulta()">Salvar</button>
-      <button class="btn-cancelar" onclick="fecharModal('modalConsulta')">Voltar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalConsulta')" style="background: none; border: none; color: red; width: 100%; margin-top: 10px;">Voltar</button>
     </div>
   </div>
 
@@ -133,7 +140,7 @@
       <label>Resultado / Valor</label><input type="text" id="e_valor">
       <label>Data</label><input type="date" id="e_data">
       <button class="btn-registro" onclick="salvarExame()">Salvar</button>
-      <button class="btn-cancelar" onclick="fecharModal('modalExame')">Voltar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalExame')" style="background: none; border: none; color: red; width: 100%; margin-top: 10px;">Voltar</button>
     </div>
   </div>
 

@@ -1,3 +1,5 @@
+// ==================== AcompanheGest - Lógica Principal ====================
+
 let dadosApp = {
   config: {
     nome: "",
@@ -9,32 +11,50 @@ let dadosApp = {
   exames: [],
   registrosDiarios: [],
 };
-const usuarioAtivo = auth.getUsuarioAtivo();
 
+// Sistema de Curiosidades para o Resumo IA
 const curiosidadesIA = {
-  8: "Os dedinhos da Íris estão se formando e ela já se mexe (mesmo que você não sinta)! 🧸",
-  12: "O sistema urinário dela começou a funcionar! O rosto está cada vez mais definido. ✨",
-  20: "Metade do caminho! A Íris já ouve sua voz. Que tal ler uma história para ela hoje? 📖",
-  28: "Ela já pisca os olhos! O cérebro está em uma fase de crescimento explosivo. 🧠",
-  36: "Ela está ganhando gordura para ficar quentinha. Quase hora de conhecer esse amor! ❤️",
+  8: "Sua pequena Íris está formando os dedinhos! Os braços já se movem.",
+  12: "Os órgãos principais já estão formados. Ela já começa a soluçar!",
+  20: "Metade do caminho! Ela já ouve sua voz e as batidas do seu coração.",
+  28: "Ela já abre os olhos e consegue perceber a luz fora da barriga.",
+  36: "Quase lá! Ela está ganhando gordura para ficar quentinha ao nascer.",
 };
 
+// Define o usuário ativo através do sistema de auth
+const usuarioAtivo =
+  typeof auth !== "undefined" && auth.getUsuarioAtivo()
+    ? auth.getUsuarioAtivo()
+    : "Andrezza";
+
 document.addEventListener("DOMContentLoaded", () => {
-  if (auth.verificarAutenticacao()) inicializarApp();
+  console.log("🌸 Inicializando UI...");
+  // Força a autenticação para garantir que o usuário ativo exista
+  if (typeof auth !== "undefined") auth.verificarAutenticacao();
+  inicializarApp();
 });
 
 function inicializarApp() {
-  const salvos = localStorage.getItem(`acompanhegest_dados_${usuarioAtivo}`);
-  if (salvos) dadosApp = JSON.parse(salvos);
-  if (!dadosApp.registrosDiarios) dadosApp.registrosDiarios = [];
+  try {
+    const salvos = localStorage.getItem(`acompanhegest_dados_${usuarioAtivo}`);
+    if (salvos) dadosApp = JSON.parse(salvos);
 
-  document.getElementById("loading").style.display = "none";
-  document
-    .getElementById("appContainer")
-    .classList.replace("container-oculto", "container-visivel");
+    // --- CORREÇÃO DA TELA BRANCA ---
+    const loading = document.getElementById("loading");
+    const app = document.getElementById("appContainer");
 
-  configurarNavegacao();
-  atualizarInterfaceHome();
+    if (loading) loading.style.display = "none";
+    if (app) {
+      app.classList.remove("container-oculto");
+      app.classList.add("container-visivel");
+    }
+
+    configurarNavegacao();
+    atualizarInterfaceHome();
+  } catch (e) {
+    console.error("Erro ao carregar app:", e);
+    document.getElementById("appContainer").classList.add("container-visivel");
+  }
 }
 
 function configurarNavegacao() {
@@ -66,12 +86,13 @@ function configurarNavegacao() {
 function calcularIdadeGestacional() {
   if (!dadosApp.config.dataInicioGestacao)
     return { semanas: 0, dias: 0, mes: 1, percentual: 0, diasRestantes: 280 };
+
   const diff = Math.floor(
     (new Date() - new Date(dadosApp.config.dataInicioGestacao)) / 86400000,
   );
   const semanas = Math.floor(diff / 7);
 
-  // Tabela simplificada de meses gestacionais
+  // Tabela de Meses Gestacionais
   let mes = 1;
   if (semanas > 4) mes = 2;
   if (semanas > 8) mes = 3;
@@ -94,7 +115,7 @@ function calcularIdadeGestacional() {
 function atualizarInterfaceHome() {
   const info = calcularIdadeGestacional();
   document.getElementById("semanasDias").textContent =
-    `${info.semanas} sem. e ${info.dias} dias`;
+    `${info.semanas} semanas e ${info.dias} dias`;
   document.getElementById("mesGestacao").textContent = `${info.mes}º mês`;
   document.getElementById("progressoBarra").style.width = `${info.percentual}%`;
   document.getElementById("diasRestantes").textContent = info.diasRestantes;
@@ -103,13 +124,15 @@ function atualizarInterfaceHome() {
   document.getElementById("bebeNome").textContent =
     dadosApp.config.nomeBebe || "Íris";
 
+  // Dashboard IA
   const chaves = Object.keys(curiosidadesIA).reverse();
   const chave = chaves.find((s) => info.semanas >= s) || 8;
   document.getElementById("resumoIA").innerHTML =
     `<p>"${curiosidadesIA[chave]}"</p>`;
 }
 
-// Modais e Registros
+// --- GESTÃO DE DADOS ---
+
 function abrirModal(tipo) {
   const ids = {
     consulta: "modalConsulta",
@@ -118,6 +141,7 @@ function abrirModal(tipo) {
   };
   document.getElementById(ids[tipo]).style.display = "flex";
 }
+
 function fecharModal(id) {
   document.getElementById(id).style.display = "none";
 }
@@ -130,6 +154,7 @@ function salvarConsulta() {
   });
   finalizarUpdate("modalConsulta");
 }
+
 function salvarExame() {
   dadosApp.exames.push({
     parametro: document.getElementById("e_tipo").value,
@@ -138,6 +163,7 @@ function salvarExame() {
   });
   finalizarUpdate("modalExame");
 }
+
 function salvarDiario() {
   dadosApp.registrosDiarios.push({
     data: document.getElementById("d_data").value,
@@ -147,12 +173,14 @@ function salvarDiario() {
   });
   finalizarUpdate("modalDiario");
 }
+
 function finalizarUpdate(modalId) {
   localStorage.setItem(
     `acompanhegest_dados_${usuarioAtivo}`,
     JSON.stringify(dadosApp),
   );
   fecharModal(modalId);
+  alert("Dados salvos com carinho! 🌸");
   atualizarInterfaceHome();
 }
 
@@ -161,16 +189,18 @@ function salvarConfig() {
   const dia = parseInt(document.getElementById("inputDias").value) || 0;
   const dataRef = new Date();
   dataRef.setDate(dataRef.getDate() - (sem * 7 + dia));
+
   dadosApp.config = {
     nome: document.getElementById("nome").value,
     dataInicioGestacao: dataRef.toISOString(),
     nomeBebe: document.getElementById("nomeBebe").value,
   };
+
   localStorage.setItem(
     `acompanhegest_dados_${usuarioAtivo}`,
     JSON.stringify(dadosApp),
   );
-  alert("Perfil Atualizado! 🌸");
+  alert("Perfil Atualizado!");
   atualizarInterfaceHome();
 }
 
@@ -186,32 +216,41 @@ function renderizarFiltroGeral() {
   const inicio = new Date(document.getElementById("filtroInicio").value);
   const fim = new Date(document.getElementById("filtroFim").value);
   const container = document.getElementById("listaFiltradaGeral");
+
   if (isNaN(inicio)) return alert("Selecione as datas.");
+
   container.innerHTML = "";
   const todos = [
-    ...dadosApp.consultas.map((i) => ({ ...i, t: "Consulta", c: "#F3E5F5" })),
-    ...dadosApp.exames.map((i) => ({ ...i, t: "Exame", c: "#E8F5E9" })),
+    ...dadosApp.consultas.map((i) => ({
+      ...i,
+      t: "👩‍⚕️ Consulta",
+      c: "#F3E5F5",
+    })),
+    ...dadosApp.exames.map((i) => ({ ...i, t: "🔬 Exame", c: "#E8F5E9" })),
     ...dadosApp.registrosDiarios.map((i) => ({
       ...i,
-      t: "Diário",
+      t: "📝 Diário",
       c: "#FFF1F3",
     })),
   ];
+
   const filtrados = todos
     .filter((i) => {
       const d = new Date(i.data);
       return d >= inicio && d <= fim;
     })
     .sort((a, b) => new Date(b.data) - new Date(a.data));
+
   filtrados.forEach((i) => {
     const detalhes =
-      i.t === "Diário"
-        ? `PA: ${i.pressao || "--"} | Peso: ${i.peso}kg`
+      i.t === "📝 Diário"
+        ? `PA: ${i.pressao || "--"} | Peso: ${i.peso}kg | Info: ${i.sintomas}`
         : i.achados || i.valor;
-    container.innerHTML += `<div class="timeline-card" style="background:${i.c}">
-            <small>${i.t} • ${new Date(i.data).toLocaleDateString("pt-BR")}</small>
-            <p><strong>${i.especialidade || i.parametro}</strong></p>
-            <p style="font-size:12px">${detalhes}</p>
-        </div>`;
+    container.innerHTML += `
+            <div class="timeline-card" style="background:${i.c}; border-radius:15px; padding:15px; margin-bottom:10px; border-left: 5px solid rgba(0,0,0,0.1);">
+                <small>${i.t} • ${new Date(i.data).toLocaleDateString("pt-BR")}</small>
+                <p><strong>${i.especialidade || i.parametro || "Registro Diário"}</strong></p>
+                <p style="font-size:12px">${detalhes}</p>
+            </div>`;
   });
 }

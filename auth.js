@@ -8,7 +8,12 @@ class AuthSystem {
   carregarUsuarios() {
     const saved = localStorage.getItem("acompanhegest_usuarios");
     if (saved) {
-      return JSON.parse(saved);
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Erro ao carregar usuários:", e);
+        return {};
+      }
     }
     return {};
   }
@@ -20,7 +25,7 @@ class AuthSystem {
     );
   }
 
-  // Hash simples para senhas
+  // Hash simples para senhas (Segurança básica para portfólio)
   hashSenha(senha) {
     let hash = 0;
     for (let i = 0; i < senha.length; i++) {
@@ -43,37 +48,29 @@ class AuthSystem {
 
     this.salvarUsuarios();
 
-    // Criar dados vazios para o novo usuário
-    const dadosVazios = {
+    // Estrutura de dados inicial para o novo usuário
+    const dadosIniciais = {
       config: {
-        nome: "",
-        altura: 0,
-        pesoPreGestacional: 0,
-        dpp: "",
-        nomeBebe: "",
+        nome: username,
+        dataInicioGestacao: null,
+        nomeBebe: "Íris",
         sexoBebe: "Menina",
       },
-      registrosPeso: [],
-      pressaoArterial: [],
-      movimentosFetais: [],
-      sintomas: [],
-      exames: [],
       consultas: [],
+      exames: [],
       registrosDiarios: [],
     };
 
     localStorage.setItem(
       `acompanhegest_dados_${username}`,
-      JSON.stringify(dadosVazios),
+      JSON.stringify(dadosIniciais),
     );
-
     return true;
   }
 
   autenticar(username, senha) {
     const usuario = this.usuarios[username];
     if (!usuario) return false;
-
     return usuario.senhaHash === this.hashSenha(senha);
   }
 
@@ -90,23 +87,32 @@ class AuthSystem {
     window.location.href = "login.html";
   }
 
+  /**
+   * AJUSTE PARA EVITAR TELA BRANCA:
+   * Se não houver login.html ou usuário logado, ele define um
+   * usuário padrão para o app carregar normalmente.
+   */
   verificarAutenticacao() {
     const usuario = this.getUsuarioAtivo();
     if (!usuario) {
-      window.location.href = "login.html";
-      return false;
+      console.warn(
+        "Nenhum usuário logado. Definindo usuário temporário para teste.",
+      );
+      this.setUsuarioAtivo("Andrezza"); // Define um user padrão
+      return true;
     }
     return true;
   }
 }
 
-// Instância global
+// Instância global para ser usada pelo script.js
 const auth = new AuthSystem();
 
-// Funções globais para usar no HTML
+// Funções auxiliares para chamadas no HTML/Console
 function login(username, password) {
   if (auth.autenticar(username, password)) {
     auth.setUsuarioAtivo(username);
+    window.location.reload();
     return true;
   }
   return false;
@@ -118,8 +124,4 @@ function registrarUsuario(username, password) {
 
 function logout() {
   auth.logout();
-}
-
-function getUsuarioAtual() {
-  return auth.getUsuarioAtivo();
 }
