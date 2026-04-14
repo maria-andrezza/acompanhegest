@@ -197,3 +197,13 @@ app.listen(PORT, () => {
   console.log(`\n🌸 AcompanheGest rodando em http://localhost:${PORT}`);
   console.log(`📝 Acesse: http://localhost:${PORT}/login.html\n`);
 });
+// Exportar para Vercel Serverless Functions
+export default app;
+
+// Manter o listen apenas para desenvolvimento local
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`🌸 AcompanheGest rodando em http://localhost:${PORT}`);
+    console.log(`📝 Acesse: http://localhost:${PORT}/login.html\n`);
+  });
+}
