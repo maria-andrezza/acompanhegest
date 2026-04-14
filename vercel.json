@@ -1,32 +1,14 @@
 {
   "version": 2,
-  "public": true,
-  "builds": [
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/*.js",
-      "use": "@vercel/node"
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs20.x"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/login.html"
     },
     {
       "src": "/(.*)",
