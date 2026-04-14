@@ -1,59 +1,280 @@
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AcompGest">
+<!DOCTYPE html>
+<html lang="pt-br">
 
-<script>
-  // IMPORTANTE: Como você vai usar o Neon, as funções agora precisam ser assíncronas (async)
-  // para esperar a resposta do servidor/banco de dados.
-
-  async function fazerLogin() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const errorDiv = document.getElementById('errorMsg');
-
-    if (!username || !password) {
-      errorDiv.textContent = '❌ Por favor, preencha todos os campos.';
-      errorDiv.style.display = 'block';
-      return;
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f8a5c2">
+  <title>Login - AcompanheGest</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      text-align: center;
     }
 
-    // Aqui você chamará sua API que conecta ao Neon
-    // Por enquanto, mantemos a lógica local até você subir o backend
-    if (login(username, password)) {
-      window.location.href = 'index.html';
-    } else {
-      errorDiv.textContent = '❌ Usuário ou senha não encontrados.';
-      errorDiv.style.display = 'block';
-    }
-  }
-
-  async function criarConta() {
-    const username = document.getElementById('newUsername').value;
-    const password = document.getElementById('newPassword').value;
-    const confirm = document.getElementById('confirmPassword').value;
-    const errorDiv = document.getElementById('errorMsg');
-
-    if (!username || !password) {
-      errorDiv.textContent = '❌ Preencha todos os campos!';
-      errorDiv.style.display = 'block';
-      return;
+    .card {
+      background: white;
+      border-radius: 48px;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
 
-    if (password !== confirm) {
-      errorDiv.textContent = '❌ As senhas não conferem!';
-      errorDiv.style.display = 'block';
-      return;
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
     }
 
-    // No Neon, você faria um: await fetch('/api/register', { ... })
-    if (registrarUsuario(username, password)) {
-      alert('✅ Conta criada com sucesso! 💖');
-      voltarLogin();
-      document.getElementById('username').value = username;
-    } else {
-      errorDiv.textContent = '❌ Este usuário já existe ou erro no banco.';
-      errorDiv.style.display = 'block';
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: #f0f0f0;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
-  }
-</script>
+
+    .tab-btn.active {
+      background: #f8a5c2;
+      color: white;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 30px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      transition: border 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #f8a5c2;
+    }
+
+    button[type="submit"] {
+      background: #f8a5c2;
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 40px;
+      font-weight: bold;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background: #f06292;
+      transform: scale(1.02);
+    }
+
+    button[type="submit"]:active {
+      transform: scale(0.98);
+    }
+
+    .error-msg {
+      color: red;
+      margin-top: 10px;
+      display: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="card">
+      <h1>🌸 AcompanheGest</h1>
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="showTab('login', event)">Entrar</button>
+        <button class="tab-btn" onclick="showTab('register', event)">Criar Conta</button>
+      </div>
+
+      <div id="loginTab">
+        <form onsubmit="event.preventDefault(); fazerLogin()">
+          <div class="form-group">
+            <input type="text" id="loginUsername" placeholder="Usuário" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="loginPassword" placeholder="Senha" required>
+          </div>
+          <button type="submit">Entrar</button>
+        </form>
+      </div>
+
+      <div id="registerTab" style="display:none">
+        <form onsubmit="event.preventDefault(); criarConta()">
+          <div class="form-group">
+            <input type="text" id="regUsername" placeholder="Usuário" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="regPassword" placeholder="Senha" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="regConfirm" placeholder="Confirmar senha" required>
+          </div>
+          <button type="submit">Criar Conta</button>
+        </form>
+      </div>
+
+      <div id="errorMsg" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- Carregar auth.js primeiro -->
+  <script src="auth.js"></script>
+
+  <script>
+    // Função para trocar entre abas (CORRIGIDA)
+    function showTab(tab, event) {
+      document.getElementById('loginTab').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('registerTab').style.display = tab === 'register' ? 'block' : 'none';
+
+      // Atualizar classe ativa dos botões
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(btn => btn.classList.remove('active'));
+
+      // Se event foi passado, usa ele; senão, encontra o botão ativo pelo texto
+      if (event && event.target) {
+        event.target.classList.add('active');
+      } else {
+        // Fallback: encontra o botão ativo
+        btns.forEach(btn => {
+          if ((tab === 'login' && btn.innerText === 'Entrar') ||
+            (tab === 'register' && btn.innerText === 'Criar Conta')) {
+            btn.classList.add('active');
+          }
+        });
+      }
+    }
+
+    // Função de login
+    async function fazerLogin() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorDiv = document.getElementById('errorMsg');
+
+      // Validação básica
+      if (!username || !password) {
+        errorDiv.textContent = '❌ Preencha todos os campos';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          sessionStorage.setItem('acompanhegest_usuario_ativo', username);
+          window.location.href = '/index.html';
+        } else {
+          errorDiv.textContent = data.error || 'Erro no login';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Erro de conexão com o servidor';
+        errorDiv.style.display = 'block';
+        console.error('Erro no login:', error);
+      }
+    }
+
+    // Função de criar conta
+    async function criarConta() {
+      const username = document.getElementById('regUsername').value;
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirm').value;
+      const errorDiv = document.getElementById('errorMsg');
+
+      // Validações
+      if (!username || !password) {
+        errorDiv.textContent = '❌ Preencha todos os campos';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (password !== confirm) {
+        errorDiv.textContent = '❌ As senhas não conferem';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (password.length < 4) {
+        errorDiv.textContent = '❌ A senha deve ter no mínimo 4 caracteres';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('✅ Conta criada com sucesso! Faça login.');
+          showTab('login', null);
+          document.getElementById('loginUsername').value = username;
+          document.getElementById('loginPassword').value = '';
+          errorDiv.style.display = 'none';
+        } else {
+          errorDiv.textContent = data.error || 'Erro ao criar conta';
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Erro de conexão com o servidor';
+        errorDiv.style.display = 'block';
+        console.error('Erro no registro:', error);
+      }
+    }
+
+    // Verificar se já está logado (redirecionar se sim)
+    document.addEventListener("DOMContentLoaded", async () => {
+      const usuarioAtivo = sessionStorage.getItem('acompanhegest_usuario_ativo');
+
+      if (usuarioAtivo) {
+        // Tenta verificar se a sessão ainda é válida no backend
+        try {
+          const res = await fetch('/api/verificar-sessao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: usuarioAtivo })
+          });
+
+          if (res.ok) {
+            // Sessão válida, redireciona para o app
+            window.location.href = '/index.html';
+          } else {
+            // Sessão inválida, limpa
+            sessionStorage.removeItem('acompanhegest_usuario_ativo');
+          }
+        } catch (error) {
+          // Se não conseguir verificar (offline), mantém na página de login
+          console.log('Offline - permanecendo na página de login');
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

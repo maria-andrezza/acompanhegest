@@ -15,6 +15,7 @@
 
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -23,21 +24,35 @@
   <div id="appContainer" class="container-oculto">
 
     <header class="header-moderno" id="mainHeader">
-      <div class="saudacao">Olá, <span id="nomeUsuario">Andrezza</span>!</div>
+      <div class="saudacao">Olá, <span id="nomeUsuario">Mamãe</span>!</div>
       <div class="info-gestacao">
         <span class="semanas-dias" id="semanasDias">-- semanas e -- dias</span>
         <div class="mes-badge">🌙 <span id="mesGestacao">--º mês</span></div>
+
+        <!-- TAMANHO DO BEBÊ (NOVO) -->
+        <div class="tamanho-bebe">
+          <span>👶 Tamanho do bebê: </span>
+          <strong id="tamanhoBebe">-- cm</strong>
+        </div>
+
         <div class="progresso-container">
           <div class="progresso-barra" id="progressoBarra"></div>
         </div>
-        <div class="faltam-dias"><span id="diasRestantes">---</span> dias para o nascimento 💖</div>
+
+        <!-- MUDADO: dias para semanas -->
+        <div class="faltam-semanas">
+          <span>🌸 Faltam </span>
+          <strong id="semanasRestantes">---</strong>
+          <span> semanas para o nascimento</span>
+        </div>
       </div>
+      <button onclick="logout()" class="btn-sair">Sair</button>
     </header>
 
     <div class="bebe-card" id="bebeCard">
       <div class="bebe-ilustracao"><span>👶</span></div>
       <div class="bebe-info">
-        <div class="bebe-nome" id="bebeNome">Íris</div>
+        <div class="bebe-nome" id="bebeNomeExibicao">Íris</div>
         <div class="bebe-status">Sua pequena grande vida</div>
       </div>
     </div>
@@ -45,19 +60,19 @@
     <main>
       <section id="secao-inicio" class="secao active">
         <div class="card-secao ia-highlight">
-          <h3>✨ Desenvolvimento da Íris</h3>
+          <h3>✨ Desenvolvimento</h3>
           <div id="resumoIA" class="resumo-ia-box">Calculando insights...</div>
         </div>
         <div class="card-secao">
           <h4>📌 Dica do Dia</h4>
-          <p style="font-size: 13px; color: #666; margin-top: 8px;">O ácido fólico e a hidratação são fundamentais para o desenvolvimento dela hoje.</p>
+          <p style="font-size: 13px; color: #666; margin-top: 8px;">A hidratação é fundamental para o líquido amniótico e para o seu bem-estar hoje.</p>
         </div>
       </section>
 
       <section id="secao-timeline" class="secao">
         <div class="card-secao">
           <h3>📅 Linha do Tempo</h3>
-          <div class="grid-datas" style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
             <div style="flex: 1;"><label>De:</label><input type="date" id="filtroInicio"></div>
             <div style="flex: 1;"><label>Até:</label><input type="date" id="filtroFim"></div>
           </div>
@@ -66,35 +81,152 @@
         </div>
       </section>
 
+      <!-- Seção Médico - Com abas para Exames e Consultas -->
       <section id="secao-medico" class="secao">
-        <div class="card-secao">
-          <h3>👩‍⚕️ Consultas e Exames</h3>
-          <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Mantenha seu histórico clínico atualizado.</p>
-          <div class="grid-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button class="btn-registro btn-roxo" onclick="abrirModal('consulta')" style="background-color: #BA68C8; color: white;">+ Consulta</button>
-            <button class="btn-registro btn-verde" onclick="abrirModal('exame')" style="background-color: #81C784; color: white;">+ Exame</button>
+        <!-- Cards de estatísticas rápidas -->
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-numero" id="totalExamesMedico">0</span>
+            <span class="stat-label">Total Exames</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-numero" id="totalConsultasMedico">0</span>
+            <span class="stat-label">Total Consultas</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-numero" id="ultimoExame">--</span>
+            <span class="stat-label">Último exame</span>
+          </div>
+        </div>
+
+        <!-- Abas de navegação dentro da seção médico -->
+        <div class="tabs-medico">
+          <button class="tab-medico active" onclick="mudarTabMedico('exames')">🔬 Exames</button>
+          <button class="tab-medico" onclick="mudarTabMedico('consultas')">👩‍⚕️ Consultas</button>
+        </div>
+
+        <!-- CONTEÚDO DA ABA EXAMES (com gráfico filtrável) -->
+        <div id="tabExames" class="tab-conteudo">
+          <div class="card-secao">
+            <div class="card-header">
+              <h3>📊 Evolução dos Exames</h3>
+              <button class="btn-flutuante" onclick="abrirModal('modalExame')">+</button>
+            </div>
+
+            <!-- SELETOR DE TIPO DE EXAME (NOVO) -->
+            <div class="filtro-exame">
+              <label>🔬 Selecione o exame:</label>
+              <select id="seletorTipoExame" onchange="filtrarGraficoPorExame()">
+                <option value="todos">📊 Todos os exames</option>
+              </select>
+            </div>
+
+            <canvas id="graficoExames" width="400" height="200" style="width:100%; height:200px;"></canvas>
+
+            <!-- Informação adicional do exame selecionado -->
+            <div id="infoExameSelecionado" class="info-exame"></div>
+          </div>
+
+          <div class="card-secao">
+            <h3>📋 Histórico de Exames</h3>
+            <div class="filtros">
+              <select id="filtroExamesAno" onchange="filtrarExamesPorAno()">
+                <option value="todos">Todos os anos</option>
+              </select>
+            </div>
+            <div id="listaExamesMedico" class="historico-lista">
+              <p style="color: #999; text-align: center;">Nenhum exame registrado</p>
+            </div>
+            <button id="btnMaisExamesMedico" class="btn-ver-mais" onclick="carregarMaisExamesMedico()" style="display:none;">Ver mais</button>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO DA ABA CONSULTAS (sem gráfico) -->
+        <div id="tabConsultas" class="tab-conteudo" style="display:none;">
+          <div class="card-secao">
+            <div class="card-header">
+              <h3>👩‍⚕️ Minhas Consultas</h3>
+              <button class="btn-flutuante" onclick="abrirModal('modalConsulta')">+</button>
+            </div>
+            <div class="filtros">
+              <select id="filtroConsultasAno" onchange="filtrarConsultasPorAno()">
+                <option value="todos">Todos os anos</option>
+              </select>
+            </div>
+            <div id="listaConsultasMedico" class="historico-lista">
+              <p style="color: #999; text-align: center;">Nenhuma consulta registrada</p>
+            </div>
+            <button id="btnMaisConsultasMedico" class="btn-ver-mais" onclick="carregarMaisConsultasMedico()" style="display:none;">Ver mais</button>
           </div>
         </div>
       </section>
 
       <section id="secao-saude" class="secao">
+        <!-- Cards de resumo -->
+        <div class="card-stats">
+          <div class="stat-item">
+            <span class="stat-numero" id="totalRegistros">0</span>
+            <span class="stat-label">Registros</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-numero" id="pesoAtual">--</span>
+            <span class="stat-label">Peso atual</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-numero" id="pressaoAtual">--</span>
+            <span class="stat-label">Pressão</span>
+          </div>
+        </div>
+
+        <!-- GRÁFICOS -->
         <div class="card-secao">
-          <h3>🌸 Meu Bem-estar</h3>
-          <button class="btn-registro btn-rosa" onclick="abrirModal('diario')" style="background-color: #F06292; color: white;">+ Registro Diário</button>
-          <p style="font-size: 11px; color: #999; text-align: center; margin-top: 10px;">(Peso, Pressão, Humor e Sintomas)</p>
+          <div class="card-header">
+            <h3>📊 Evolução do Peso</h3>
+            <button class="btn-flutuante" onclick="abrirModal('modalDiario')">+</button>
+          </div>
+          <canvas id="graficoPeso" width="400" height="200" style="width:100%; height:200px;"></canvas>
+        </div>
+
+        <div class="card-secao">
+          <h3>❤️ Evolução da Pressão</h3>
+          <canvas id="graficoPressao" width="400" height="200" style="width:100%; height:200px;"></canvas>
+        </div>
+
+        <!-- HISTÓRICO COM ABAS -->
+        <div class="card-secao">
+          <div class="tabs-historico">
+            <button class="tab-historico active" onclick="mudarTabHistorico('peso')">⚖️ Peso</button>
+            <button class="tab-historico" onclick="mudarTabHistorico('pressao')">❤️ Pressão</button>
+            <button class="tab-historico" onclick="mudarTabHistorico('sintomas')">🤰 Sintomas</button>
+          </div>
+
+          <div id="listaPeso" class="historico-lista-tab"></div>
+          <div id="listaPressao" class="historico-lista-tab" style="display:none;"></div>
+          <div id="listaSintomas" class="historico-lista-tab" style="display:none;"></div>
         </div>
       </section>
 
       <section id="secao-perfil" class="secao">
         <div class="card-secao">
           <h3>👤 Meu Perfil</h3>
-          <label>Seu Nome</label><input type="text" id="nome">
-          <label>Nome do Bebê</label><input type="text" id="nomeBebe">
-          <div class="grid-datas" style="display: flex; gap: 10px; margin-top: 15px;">
+          <label>Seu Nome</label>
+          <input type="text" id="nome">
+
+          <label>Nome do Bebê</label>
+          <input type="text" id="nomeBebe">
+
+          <!-- NOVO: Sexo do Bebê -->
+          <label>🌸 Sexo do Bebê</label>
+          <select id="sexoBebe">
+            <option value="Menina">👧 Menina</option>
+            <option value="Menino">👦 Menino</option>
+          </select>
+
+          <div style="display: flex; gap: 10px; margin-top: 15px;">
             <div style="flex: 1;"><label>Semanas</label><input type="number" id="inputSemanas"></div>
             <div style="flex: 1;"><label>Dias</label><input type="number" id="inputDias"></div>
           </div>
-          <button class="btn-registro" onclick="salvarConfig()" style="margin-top: 20px;">💾 Salvar Dados</button>
+          <button class="btn-registro" onclick="salvarConfig()">💾 Salvar Dados</button>
         </div>
       </section>
     </main>
@@ -116,9 +248,9 @@
         <div style="flex: 1;"><label>Peso (kg)</label><input type="number" id="d_peso" step="0.1"></div>
         <div style="flex: 1;"><label>Pressão</label><input type="text" id="d_pressao" placeholder="12/8"></div>
       </div>
-      <label>Sintomas / Humor</label><input type="text" id="d_sintomas" placeholder="Ex: Azia, sono, feliz...">
+      <label>Sintomas / Humor</label><input type="text" id="d_sintomas">
       <button class="btn-registro" onclick="salvarDiario()">Gravar</button>
-      <button class="btn-cancelar" onclick="fecharModal('modalDiario')" style="background: none; border: none; color: red; width: 100%; margin-top: 10px;">Cancelar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalDiario')" style="background: none; border: none; color: red; width: 100%; margin-top: 15px;">Cancelar</button>
     </div>
   </div>
 
@@ -127,25 +259,48 @@
       <h3>👩‍⚕️ Nova Consulta</h3>
       <label>Especialidade</label><input type="text" id="c_especialidade">
       <label>Data</label><input type="date" id="c_data">
-      <label>Anotações</label><textarea id="c_achados" rows="3" style="width: 100%; border-radius: 12px; padding: 10px;"></textarea>
+      <label>Anotações</label><textarea id="c_achados" rows="3"></textarea>
       <button class="btn-registro" onclick="salvarConsulta()">Salvar</button>
-      <button class="btn-cancelar" onclick="fecharModal('modalConsulta')" style="background: none; border: none; color: red; width: 100%; margin-top: 10px;">Voltar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalConsulta')" style="background: none; border: none; color: red; width: 100%; margin-top: 15px;">Voltar</button>
     </div>
   </div>
 
   <div id="modalExame" class="modal">
     <div class="modal-conteudo">
       <h3>🔬 Novo Exame</h3>
-      <label>Tipo de Exame</label><input type="text" id="e_tipo">
-      <label>Resultado / Valor</label><input type="text" id="e_valor">
+      <label>Exame</label><input type="text" id="e_tipo">
+      <label>Resultado</label><input type="text" id="e_valor">
       <label>Data</label><input type="date" id="e_data">
       <button class="btn-registro" onclick="salvarExame()">Salvar</button>
-      <button class="btn-cancelar" onclick="fecharModal('modalExame')" style="background: none; border: none; color: red; width: 100%; margin-top: 10px;">Voltar</button>
+      <button class="btn-cancelar" onclick="fecharModal('modalExame')" style="background: none; border: none; color: red; width: 100%; margin-top: 15px;">Voltar</button>
     </div>
   </div>
 
   <script src="auth.js"></script>
   <script src="script.js"></script>
+
+  <!-- Modal de Detalhes da Consulta -->
+  <div id="modalDetalhesConsulta" class="modal-detalhes">
+    <div class="modal-detalhes-conteudo">
+      <h3 id="detalhesTitulo">📋 Detalhes da Consulta</h3>
+      <p><strong>📅 Data:</strong> <span id="detalhesData"></span></p>
+      <p><strong>👩‍⚕️ Especialidade:</strong> <span id="detalhesEspecialidade"></span></p>
+      <p><strong>📝 Anotações:</strong> <span id="detalhesAchados"></span></p>
+      <button onclick="fecharModalDetalhes()">Fechar</button>
+    </div>
+  </div>
+
+  <!-- Modal de Detalhes do Exame -->
+  <div id="modalDetalhesExame" class="modal-detalhes">
+    <div class="modal-detalhes-conteudo">
+      <h3>🔬 Detalhes do Exame</h3>
+      <p><strong>📅 Data:</strong> <span id="detalhesExameData"></span></p>
+      <p><strong>🔬 Exame:</strong> <span id="detalhesExameTipo"></span></p>
+      <p><strong>📊 Resultado:</strong> <span id="detalhesExameValor"></span></p>
+      <button onclick="fecharModalDetalhes()">Fechar</button>
+    </div>
+  </div>
+
 </body>
 
 </html>

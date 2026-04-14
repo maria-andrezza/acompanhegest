@@ -59,7 +59,10 @@ self.addEventListener("activate", (event) => {
       .then(() => self.clients.claim()),
   );
 });
-
+// Ignorar requisições de API
+if (event.request.url.includes("/api/")) {
+  return fetch(event.request);
+}
 // Intercepta requisições
 self.addEventListener("fetch", (event) => {
   event.respondWith(

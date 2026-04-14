@@ -1,0 +1,24 @@
+# Dependências
+node_modules/
+package-lock.json
+
+# Variáveis de ambiente (contém senhas!)
+.env
+.env.local
+.env.production
+
+# Vercel
+.vercel
+.vercelignore
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
