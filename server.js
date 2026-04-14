@@ -192,20 +192,44 @@ pool.connect((err, client, release) => {
   }
 });
 
-// ==================== SERVIR ARQUIVOS ESTÁTICOS + ROTAS ====================
+// ==================== SERVIR ARQUIVOS ESTÁTICOS E ROTAS ====================
 
-// Servir arquivos estáticos (HTML, CSS, JS, icons, etc.)
-app.use(express.static("."));
+// Servir todos os arquivos estáticos (HTML, CSS, JS, manifest, icons, etc.)
+app.use(
+  express.static(".", {
+    index: false, // não tentar usar index.html automaticamente
+  }),
+);
 
-// Rota padrão para a raiz (evita "Cannot GET /")
+// Rota para a raiz → redireciona para login
 app.get("/", (req, res) => {
-  res.sendFile("login.html", { root: "." });
+  res.sendFile("login.html", { root: process.cwd() });
 });
 
-// Export para Vercel (obrigatório)
+// Rota para login.html (caso acesse diretamente)
+app.get("/login.html", (req, res) => {
+  res.sendFile("login.html", { root: process.cwd() });
+});
+
+// Rota para index.html (após login)
+app.get("/index.html", (req, res) => {
+  res.sendFile("index.html", { root: process.cwd() });
+});
+
+// Rota padrão para qualquer outra página estática
+app.get("*", (req, res) => {
+  // Se for uma requisição de API, retorna 404 normal
+  if (req.url.startsWith("/api/")) {
+    return res.status(404).json({ error: "API route not found" });
+  }
+  // Para qualquer outra coisa, tenta servir o arquivo ou volta para login
+  res.sendFile("login.html", { root: process.cwd() });
+});
+
+// Export para Vercel
 export default app;
 
-// Apenas para rodar localmente
+// Apenas para desenvolvimento local
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log(`\n🌸 AcompanheGest rodando em http://localhost:${PORT}`);
