@@ -1,157 +1,121 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import pg from "pg";
-
-const { Pool } = pg;
-
-// CONEXÃO DIRETA COM NEON
-const connectionString =
-  "postgresql://neondb_owner:npg_qNL8ZPsiXOu2@ep-falling-river-amskzp6n-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require";
-
-const pool = new Pool({
-  connectionString: connectionString,
-  ssl: {
-    rejectUnauthorized: false, // necessário para Neon
-  },
-});
-
-const app = express();
-const PORT = 3000;
-
-// ==================== MIDDLEWARES ====================
-app.use(express.json());
-
-// ⚠️ IMPORTANTE: ROTAS DA API ANTES do express.static
-// Se o static ficar antes, o Express tenta servir pastas/arquivos ao invés de executar as rotas dinâmicas
-
 // ==================== ROTAS DE AUTENTICAÇÃO ====================
+
+// Rota de health check (DEVE SER A PRIMEIRA ROTA API)
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "API funcionando!",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Rota de registro
 app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
-  // ... (seu código atual permanece igual)
-  if (!username || !password) {
-    return res.status(400).json({ error: "Usuário e senha são obrigatórios" });
-  }
-  if (password.length < 4) {
-    return res
-      .status(400)
-      .json({ error: "Senha deve ter no mínimo 4 caracteres" });
-  }
-
-  try {
-    const existing = await pool.query(
-      "SELECT id FROM users WHERE username = $1",
-      [username],
-    );
-    if (existing.rows.length > 0) {
-      return res.status(409).json({ error: "Usuário já existe" });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    await pool.query(
-      "INSERT INTO users (username, password_hash) VALUES ($1, $2)",
-      [username, passwordHash],
-    );
-
-    console.log(`✅ Usuário criado: ${username}`);
-    res
-      .status(201)
-      .json({ success: true, message: "Usuário criado com sucesso" });
-  } catch (error) {
-    console.error("Erro no registro:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
-  }
+  // ... seu código
 });
 
 // Rota de login
 app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-  // ... (seu código atual)
-  if (!username || !password) {
-    return res.status(400).json({ error: "Usuário e senha são obrigatórios" });
-  }
-
-  try {
-    const result = await pool.query("SELECT * FROM users WHERE username = $1", [
-      username,
-    ]);
-    if (result.rows.length === 0) {
-      return res.status(401).json({ error: "Credenciais inválidas" });
-    }
-
-    const isValid = await bcrypt.compare(
-      password,
-      result.rows[0].password_hash,
-    );
-    if (!isValid) {
-      return res.status(401).json({ error: "Credenciais inválidas" });
-    }
-
-    console.log(`✅ Login realizado: ${username}`);
-    res.json({ success: true, username });
-  } catch (error) {
-    console.error("Erro no login:", error);
-    res.status(500).json({ error: "Erro interno" });
-  }
+  // ... seu código
 });
 
 // Rota de verificação de sessão
 app.post("/api/verificar-sessao", async (req, res) => {
-  const { username } = req.body;
-  if (!username) {
-    return res.status(400).json({ valid: false });
-  }
-
-  try {
-    const result = await pool.query(
-      "SELECT id FROM users WHERE username = $1",
-      [username],
-    );
-    res.json({ valid: result.rows.length > 0 });
-  } catch (error) {
-    console.error("Erro na verificação:", error);
-    res.status(500).json({ valid: false });
-  }
+  // ... seu código
 });
 
 // ==================== ROTAS DE DADOS ====================
 
 // Salvar consulta
 app.post("/api/consultas", async (req, res) => {
-  /* seu código atual */
+  const { username, especialidade, data, achados } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO consultas (username, especialidade, data, achados) VALUES ($1, $2, $3, $4)",
+      [username, especialidade, data, achados],
+    );
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao salvar consulta" });
+  }
 });
 
 // Buscar consultas
 app.get("/api/consultas/:username", async (req, res) => {
-  /* seu código atual */
+  const { username } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM consultas WHERE username = $1 ORDER BY data DESC",
+      [username],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar consultas" });
+  }
 });
 
 // Salvar exame
 app.post("/api/exames", async (req, res) => {
-  /* seu código atual */
+  const { username, tipo, valor, data } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO exames (username, tipo, valor, data) VALUES ($1, $2, $3, $4)",
+      [username, tipo, valor, data],
+    );
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao salvar exame" });
+  }
 });
 
 // Buscar exames
 app.get("/api/exames/:username", async (req, res) => {
-  /* seu código atual */
+  const { username } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM exames WHERE username = $1 ORDER BY data DESC",
+      [username],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar exames" });
+  }
 });
 
 // Salvar registro diário
 app.post("/api/registros-diarios", async (req, res) => {
-  /* seu código atual */
+  const { username, data, peso, pressao, sintomas } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO registros_diarios (username, data, peso, pressao, sintomas) VALUES ($1, $2, $3, $4, $5)",
+      [username, data, peso, pressao, sintomas],
+    );
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao salvar registro diário" });
+  }
 });
 
 // Buscar registros diários
 app.get("/api/registros-diarios/:username", async (req, res) => {
-  /* seu código atual */
+  const { username } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT * FROM registros_diarios WHERE username = $1 ORDER BY data DESC",
+      [username],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar registros diários" });
+  }
 });
 
-// ✅ ROTA QUE ESTAVA DANDO 404
+// Buscar todos os dados
 app.get("/api/todos-dados/:username", async (req, res) => {
   const { username } = req.params;
-  console.log(`📡 Rota /api/todos-dados acessada para usuário: ${username}`);
-
   try {
     const [consultas, exames, registrosDiarios] = await Promise.all([
       pool.query(
@@ -167,68 +131,35 @@ app.get("/api/todos-dados/:username", async (req, res) => {
         [username],
       ),
     ]);
-
     res.json({
       consultas: consultas.rows,
       exames: exames.rows,
       registrosDiarios: registrosDiarios.rows,
     });
   } catch (error) {
-    console.error("Erro ao carregar todos os dados:", error);
+    console.error("Erro ao carregar dados:", error);
     res.status(500).json({ error: "Erro ao carregar dados" });
   }
 });
 
-// ==================== ARQUIVOS ESTÁTICOS (DEVE FICAR NO FINAL) ====================
+// ==================== ARQUIVOS ESTÁTICOS ====================
 app.use(express.static("."));
 
-// ==================== TESTE DE CONEXÃO ====================
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error("❌ Erro ao conectar no Neon:", err.message);
-  } else {
-    console.log("✅ Conectado ao Neon com sucesso!");
-    release();
-  }
-});
-
-// ==================== SERVIR FRONTEND + API ====================
-
-// Servir arquivos estáticos da pasta public
-app.use(express.static("public"));
-
-// Redirecionar raiz para login
-app.get("/", (req, res) => {
-  res.sendFile("login.html", { root: "./public" });
-});
-
-// Rotas explícitas importantes
-app.get("/login.html", (req, res) => {
-  res.sendFile("login.html", { root: "./public" });
-});
-
-app.get("/index.html", (req, res) => {
-  res.sendFile("index.html", { root: "./public" });
-});
-
-// Catch-all - qualquer outra página volta para login (útil para PWA)
+// ==================== CATCH-ALL ====================
+// Isso deve ser a ÚLTIMA rota
 app.get("*", (req, res) => {
   if (req.url.startsWith("/api/")) {
     return res.status(404).json({ error: "API route not found" });
   }
-  res.sendFile("login.html", { root: "./public" });
+  res.sendFile("login.html", { root: "." });
 });
 
-// Export obrigatório para Vercel
+// Export para Vercel
 export default app;
 
-// Apenas para desenvolvimento local
+// Servidor local
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`\n🌸 AcompanheGest rodando em http://localhost:${PORT}`);
-    console.log(`📝 Acesse: http://localhost:${PORT}/login.html\n`);
+  app.listen(3000, () => {
+    console.log(`🌸 Servidor rodando em http://localhost:3000`);
   });
 }
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "API funcionando!" });
-});
