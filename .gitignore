@@ -22,3 +22,7 @@ npm-debug.log*
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Arquivos de configuração local
+server_local.js
+*.bak
