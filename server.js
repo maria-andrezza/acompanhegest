@@ -192,41 +192,34 @@ pool.connect((err, client, release) => {
   }
 });
 
-// ==================== SERVIR ARQUIVOS ESTÁTICOS E ROTAS ====================
+// ==================== SERVIR FRONTEND + API ====================
 
-// Servir todos os arquivos estáticos (HTML, CSS, JS, manifest, icons, etc.)
-app.use(
-  express.static(".", {
-    index: false, // não tentar usar index.html automaticamente
-  }),
-);
+// Servir arquivos estáticos da pasta public
+app.use(express.static("public"));
 
-// Rota para a raiz → redireciona para login
+// Redirecionar raiz para login
 app.get("/", (req, res) => {
-  res.sendFile("login.html", { root: process.cwd() });
+  res.sendFile("login.html", { root: "./public" });
 });
 
-// Rota para login.html (caso acesse diretamente)
+// Rotas explícitas importantes
 app.get("/login.html", (req, res) => {
-  res.sendFile("login.html", { root: process.cwd() });
+  res.sendFile("login.html", { root: "./public" });
 });
 
-// Rota para index.html (após login)
 app.get("/index.html", (req, res) => {
-  res.sendFile("index.html", { root: process.cwd() });
+  res.sendFile("index.html", { root: "./public" });
 });
 
-// Rota padrão para qualquer outra página estática
+// Catch-all - qualquer outra página volta para login (útil para PWA)
 app.get("*", (req, res) => {
-  // Se for uma requisição de API, retorna 404 normal
   if (req.url.startsWith("/api/")) {
     return res.status(404).json({ error: "API route not found" });
   }
-  // Para qualquer outra coisa, tenta servir o arquivo ou volta para login
-  res.sendFile("login.html", { root: process.cwd() });
+  res.sendFile("login.html", { root: "./public" });
 });
 
-// Export para Vercel
+// Export obrigatório para Vercel
 export default app;
 
 // Apenas para desenvolvimento local
