@@ -1,3 +1,36 @@
 {
-  "version": 2
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static",
+      "config": {
+        "excludeFiles": "api/**"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1.js" },
+    { "src": "/login.html", "dest": "/login.html" },
+    { "src": "/index.html", "dest": "/index.html" },
+    { "src": "/style.css", "dest": "/style.css" },
+    { "src": "/auth.js", "dest": "/auth.js" },
+    { "src": "/script.js", "dest": "/script.js" },
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/service-worker.js", "dest": "/service-worker.js" },
+    { "src": "/offline.html", "dest": "/offline.html" },
+    { "src": "/(.*)", "dest": "/login.html" }
+  ]
 }

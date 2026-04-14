@@ -2,88 +2,72 @@
 
 class AuthSystem {
   constructor() {
-    // Não precisa mais carregar usuários do localStorage, agora é tudo no backend
+    // Tudo agora é gerenciado via backend + sessionStorage
   }
 
-  // Obtém o utilizador logado na sessão atual
   getUsuarioAtivo() {
     return sessionStorage.getItem("acompanhegest_usuario_ativo");
   }
 
-  // Define o utilizador na sessão
   setUsuarioAtivo(username) {
     sessionStorage.setItem("acompanhegest_usuario_ativo", username);
   }
 
-  // Termina a sessão
   logout() {
     sessionStorage.removeItem("acompanhegest_usuario_ativo");
     window.location.href = "/login.html";
   }
 
   /**
-   * VERIFICAÇÃO DE AUTENTICAÇÃO MELHORADA:
-   * 1. Verifica se há usuário na sessão
-   * 2. Consulta o backend para confirmar se a sessão ainda é válida
-   * 3. Se falhar, redireciona para o login
+   * Verificação principal de autenticação
    */
   async verificarAutenticacao() {
     const usuario = this.getUsuarioAtivo();
 
-    // Se não tem usuário na sessão, redireciona
     if (!usuario) {
-      // Evita loop infinito na página de login
       if (!window.location.href.includes("login.html")) {
         window.location.href = "/login.html";
       }
       return false;
     }
 
-    // Se já está na página de login, não precisa verificar
+    // Se estiver na página de login, não precisa verificar no backend
     if (window.location.href.includes("login.html")) {
       return true;
     }
 
     try {
-      // Verifica no backend se o usuário ainda existe e está ativo
       const response = await fetch("/api/verificar-sessao", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: usuario }),
       });
 
       if (!response.ok) {
-        // Sessão inválida - limpa e redireciona
-        console.error("Sessão inválida, redirecionando para login...");
+        console.error("Sessão inválida no servidor");
         this.logout();
         return false;
       }
 
       const data = await response.json();
+
       if (!data.valid) {
-        console.error("Usuário não encontrado no banco, redirecionando...");
+        console.error("Usuário não encontrado no banco");
         this.logout();
         return false;
       }
 
-      // Sessão válida
       return true;
     } catch (error) {
-      // Erro de rede ou API indisponível
-      console.error("Erro ao verificar autenticação:", error);
-
-      // Se for erro de conexão, mantém o usuário logado (modo offline)
-      // Mas mostra um aviso silencioso
-      console.warn("Modo offline - usando sessão local");
+      console.error("Erro ao verificar sessão:", error);
+      // Em caso de erro de rede, mantém o usuário logado (modo offline)
+      console.warn("Modo offline - mantendo sessão local");
       return true;
     }
   }
 
   /**
-   * Verificação síncrona para uso em páginas que não precisam de backend
-   * (usada antes do carregamento completo da página)
+   * Verificação síncrona (usada no carregamento inicial)
    */
   verificarAutenticacaoSync() {
     const usuario = this.getUsuarioAtivo();
@@ -103,7 +87,8 @@ function logout() {
   auth.logout();
 }
 
-// Função para login (deve ser chamada após sucesso no backend)
+// ==================== FUNÇÕES DE LOGIN E REGISTRO ====================
+
 async function realizarLogin(username, password) {
   try {
     const response = await fetch("/api/login", {
@@ -114,11 +99,17 @@ async function realizarLogin(username, password) {
 
     const data = await response.json();
 
-    if (response.ok) {
+    if (response.ok && data.success) {
       auth.setUsuarioAtivo(username);
-      return { success: true, message: data.message };
+      return {
+        success: true,
+        message: data.message || "Login realizado com sucesso",
+      };
     } else {
-      return { success: false, error: data.error };
+      return {
+        success: false,
+        error: data.error || "Credenciais inválidas",
+      };
     }
   } catch (error) {
     console.error("Erro no login:", error);
@@ -126,7 +117,6 @@ async function realizarLogin(username, password) {
   }
 }
 
-// Função para registrar novo usuário
 async function realizarRegistro(username, password) {
   try {
     const response = await fetch("/api/register", {
@@ -138,9 +128,15 @@ async function realizarRegistro(username, password) {
     const data = await response.json();
 
     if (response.ok) {
-      return { success: true, message: data.message };
+      return {
+        success: true,
+        message: data.message || "Conta criada com sucesso!",
+      };
     } else {
-      return { success: false, error: data.error };
+      return {
+        success: false,
+        error: data.error || "Erro ao criar conta",
+      };
     }
   } catch (error) {
     console.error("Erro no registro:", error);
@@ -148,7 +144,7 @@ async function realizarRegistro(username, password) {
   }
 }
 
-// Exportar para uso em outros arquivos (se necessário)
+// Export para uso em outros arquivos (módulos)
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { auth, logout, realizarLogin, realizarRegistro };
 }
