@@ -192,18 +192,23 @@ pool.connect((err, client, release) => {
   }
 });
 
-// ==================== INICIAR SERVIDOR ====================
-app.listen(PORT, () => {
-  console.log(`\n🌸 AcompanheGest rodando em http://localhost:${PORT}`);
-  console.log(`📝 Acesse: http://localhost:${PORT}/login.html\n`);
+// ==================== SERVIR ARQUIVOS ESTÁTICOS + ROTAS ====================
+
+// Servir arquivos estáticos (HTML, CSS, JS, icons, etc.)
+app.use(express.static("."));
+
+// Rota padrão para a raiz (evita "Cannot GET /")
+app.get("/", (req, res) => {
+  res.sendFile("login.html", { root: "." });
 });
-// Exportar para Vercel Serverless Functions
+
+// Export para Vercel (obrigatório)
 export default app;
 
-// Manter o listen apenas para desenvolvimento local
+// Apenas para rodar localmente
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
-    console.log(`🌸 AcompanheGest rodando em http://localhost:${PORT}`);
+    console.log(`\n🌸 AcompanheGest rodando em http://localhost:${PORT}`);
     console.log(`📝 Acesse: http://localhost:${PORT}/login.html\n`);
   });
 }
