@@ -1,8 +1,7 @@
 // AcompanheGest - Service Worker
 // Permite que o app funcione offline e tenha experiência nativa
 
-// AcompanheGest - Service Worker Corrigido
-const CACHE_NAME = "acompanhegest-v2.1.1"; // Versão incrementada para forçar atualização
+const CACHE_NAME = "acompanhegest-v3.0.0"; // Versão incrementada
 const urlsToCache = [
   "/",
   "/login.html",
@@ -20,10 +19,11 @@ const urlsToCache = [
   "/icons/icon-152.png",
   "/icons/icon-192.png",
   "/icons/icon-384.png",
-  "/icons/icon-512.png", // MUDADO PARA .PNG para coincidir com sua pasta
+  "/icons/icon-512.png",
 ];
 
-// Instalação do Service Worker
+// ==================== INSTALAÇÃO ====================
+
 self.addEventListener("install", (event) => {
   console.log("[Service Worker] Instalando...");
   event.waitUntil(
@@ -37,7 +37,8 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Ativação - limpa caches antigos
+// ==================== ATIVAÇÃO ====================
+
 self.addEventListener("activate", (event) => {
   console.log("[Service Worker] Ativando...");
   event.waitUntil(
@@ -59,26 +60,31 @@ self.addEventListener("activate", (event) => {
       .then(() => self.clients.claim()),
   );
 });
-// Ignorar requisições de API
-if (event.request.url.includes("/api/")) {
-  return fetch(event.request);
-}
-// Intercepta requisições
+
+// ==================== INTERCEPTAÇÃO DE REQUISIÇÕES ====================
+
 self.addEventListener("fetch", (event) => {
+  // 🔥 IGNORAR REQUISIÇÕES DE API (não fazer cache)
+  if (event.request.url.includes("/api/")) {
+    console.log("[Service Worker] Ignorando API:", event.request.url);
+    return event.respondWith(fetch(event.request));
+  }
+
+  // Para arquivos estáticos, tentar cache primeiro
   event.respondWith(
-    caches
-      .match(event.request)
-      .then((response) => {
-        // Cache hit - retorna do cache
-        if (response) {
-          return response;
-        }
+    caches.match(event.request).then((response) => {
+      // Cache hit - retorna do cache
+      if (response) {
+        console.log("[Service Worker] Cache hit:", event.request.url);
+        return response;
+      }
 
-        // Clone da requisição
-        const fetchRequest = event.request.clone();
+      // Clone da requisição para buscar na rede
+      const fetchRequest = event.request.clone();
 
-        return fetch(fetchRequest).then((response) => {
-          // Verifica se é uma resposta válida
+      return fetch(fetchRequest)
+        .then((response) => {
+          // Verifica se é uma resposta válida para cache
           if (
             !response ||
             response.status !== 200 ||
@@ -95,34 +101,36 @@ self.addEventListener("fetch", (event) => {
           });
 
           return response;
-        });
-      })
-      .catch(() => {
-        // Se estiver offline e for uma página, mostra página offline
-        if (event.request.destination === "document") {
-          return caches.match("/offline.html");
-        }
+        })
+        .catch(() => {
+          // Fallback offline
+          if (event.request.destination === "document") {
+            console.log("[Service Worker] Offline - servindo offline.html");
+            return caches.match("/offline.html");
+          }
 
-        // Para imagens, retorna um placeholder genérico
-        if (event.request.destination === "image") {
+          // Para imagens, retorna um placeholder
+          if (event.request.destination === "image") {
+            return new Response(
+              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f8a5c2"/><text x="50" y="67" font-size="50" text-anchor="middle" fill="white">🌸</text></svg>',
+              { headers: { "Content-Type": "image/svg+xml" } },
+            );
+          }
+
           return new Response(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f8a5c2"/><text x="50" y="67" font-size="50" text-anchor="middle" fill="white">🌸</text></svg>',
-            { headers: { "Content-Type": "image/svg+xml" } },
+            "Você está offline. Conecte-se à internet para acessar o conteúdo.",
+            {
+              status: 503,
+              statusText: "Offline",
+            },
           );
-        }
-
-        return new Response(
-          "Você está offline. Conecte-se à internet para acessar o conteúdo.",
-          {
-            status: 503,
-            statusText: "Offline",
-          },
-        );
-      }),
+        });
+    }),
   );
 });
 
-// Notificações push (opcional)
+// ==================== NOTIFICAÇÕES PUSH ====================
+
 self.addEventListener("push", (event) => {
   const options = {
     body: event.data ? event.data.text() : "Hora de registrar seus dados!",
@@ -150,7 +158,8 @@ self.addEventListener("push", (event) => {
   );
 });
 
-// Clique na notificação
+// ==================== CLIQUE NA NOTIFICAÇÃO ====================
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
