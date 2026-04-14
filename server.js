@@ -229,3 +229,6 @@ if (process.env.NODE_ENV !== "production") {
     console.log(`📝 Acesse: http://localhost:${PORT}/login.html\n`);
   });
 }
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "API funcionando!" });
+});
