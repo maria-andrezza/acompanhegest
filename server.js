@@ -154,12 +154,13 @@ app.get("*", (req, res) => {
   res.sendFile("login.html", { root: "." });
 });
 
-// Export para Vercel
+// Export para Vercel (OBRIGATÓRIO)
 export default app;
 
-// Servidor local
+// Isso só roda LOCALMENTE, não no Vercel
 if (process.env.NODE_ENV !== "production") {
-  app.listen(3000, () => {
-    console.log(`🌸 Servidor rodando em http://localhost:3000`);
+  const PORT = 3000;
+  app.listen(PORT, () => {
+    console.log(`🌸 Servidor rodando em http://localhost:${PORT}`);
   });
 }
