@@ -1,10 +1,7 @@
 {
   "version": 2,
+  "public": true,
   "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    },
     {
       "src": "*.html",
       "use": "@vercel/static"
@@ -16,20 +13,24 @@
     {
       "src": "*.js",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server.js"
+      "dest": "/api/$1"
     },
     {
-      "src": "/(.*\\.(html|css|js|json|png|ico|jpg))",
-      "dest": "/$1"
+      "src": "/",
+      "dest": "/login.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/$1"
     }
   ]
 }
